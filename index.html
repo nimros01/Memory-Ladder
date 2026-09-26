@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recall Ladder">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#3947c9">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADLElEQVR4nO3cwY0UMRBAURaRA5EsEiQAIRMBEhAJWXDoyx740OOeGrzSe3c8lvfjVo809fTx8/c38Cdv//cG2Jc4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgvXvMx3z7+uH6Ip++/Ljyz5+f31/fw8+fv177Hs57mv4h9V2yeGkhkbv8SV5a+PPssIdbzT5W7l7Gwpp3/6ssrLnDHhYMxjFRxq0rz53g+ZV32MOaqTjmyji//vTZnVl/hz0s87ZCGolj+to48ykPeCT/81N22MMVbg6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEgjcVz8xfNdPuUxvzb++6fssIcr3BykqTimL48z60//xz2z/g57WDZ4c8z1cX7lubM7v/IOe1gz+1iZ6OPWNSdO8NY1d9jDgvHhLQeTffbZw3kPioPXyNsKSRwkcZDEQRIHSRwkcZDEQXrQ7PMdvhn0Le2txr8h3WHmt/nra2YfKzvM/DZ/fdlgHDvM/DZ//YqpOHaY+W3++kXeVkgjceww89v89evcHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkEbi2GHmt/nr17k5SFNx7DDz2/z1iwZvjh1mfpu/fsXsY2WHmd/mry970HjrHSbamOxzK7PPSd5WSOIgiYMkDpI4SOIgiYMkDtKDZp/7dvKwwzmcN/4Nqbnjhx3O4VazjxVzxw87nMOCwTjMHT/scA5rpuIwd/ywwzks87ZCGonD3PHDDudwhZuDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA7SSBzmjh92OIcr3BykqTjMHT/scA7LBm8Oc8cPO5zDmtnHirnjhx3OYcGDxlvvMNHGZJ9bmX1O8rZCEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkH4DE303ThNaHP8AAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADLElEQVR4nO3cwY0UMRBAURaRA5EsEiQAIRMBEhAJWXDoyx740OOeGrzSe3c8lvfjVo809fTx8/c38Cdv//cG2Jc4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgvXvMx3z7+uH6Ip++/Ljyz5+f31/fw8+fv177Hs57mv4h9V2yeGkhkbv8SV5a+PPssIdbzT5W7l7Gwpp3/6ssrLnDHhYMxjFRxq0rz53g+ZV32MOaqTjmyji//vTZnVl/hz0s87ZCGolj+to48ykPeCT/81N22MMVbg6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEgjcVz8xfNdPuUxvzb++6fssIcr3BykqTimL48z60//xz2z/g57WDZ4c8z1cX7lubM7v/IOe1gz+1iZ6OPWNSdO8NY1d9jDgvHhLQeTffbZw3kPioPXyNsKSRwkcZDEQRIHSRwkcZDEQXrQ7PMdvhn0Le2txr8h3WHmt/nra2YfKzvM/DZ/fdlgHDvM/DZ//YqpOHaY+W3++kXeVkgjceww89v89evcHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkEbi2GHmt/nr17k5SFNx7DDz2/z1iwZvjh1mfpu/fsXsY2WHmd/mry970HjrHSbamOxzK7PPSd5WSOIgiYMkDpI4SOIgiYMkDtKDZp/7dvKwwzmcN/4Nqbnjhx3O4VazjxVzxw87nMOCwTjMHT/scA5rpuIwd/ywwzks87ZCGonD3PHDDudwhZuDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA7SSBzmjh92OIcr3BykqTjMHT/scA7LBm8Oc8cPO5zDmtnHirnjhx3OYcGDxlvvMNHGZJ9bmX1O8rZCEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkH4DE303ThNaHP8AAAAASUVORK5CYII=">
+<title>Recall Ladder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+:root {
+  --bg: #eceef6;
+  --surface: #fbfbfe;
+  --surface-2: #e2e5f2;
+  --ink: #1a1e3c;
+  --ink-soft: #565b80;
+  --line: #cdd1e6;
+  --accent: #3947c9;
+  --accent-ink: #ffffff;
+  --good: #16795a;
+  --good-bg: #d6f1e6;
+  --bad: #b8371f;
+  --bad-bg: #f9dcd5;
+  --font-display: "Unbounded", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #12152b;
+    --surface: #1b1f3d;
+    --surface-2: #262b52;
+    --ink: #e9ebfa;
+    --ink-soft: #9ea4cf;
+    --line: #333a6b;
+    --accent: #8f9dff;
+    --accent-ink: #12152b;
+    --good: #6fd9ae;
+    --good-bg: #17392f;
+    --bad: #ff9c85;
+    --bad-bg: #472119;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12152b;
+  --surface: #1b1f3d;
+  --surface-2: #262b52;
+  --ink: #e9ebfa;
+  --ink-soft: #9ea4cf;
+  --line: #333a6b;
+  --accent: #8f9dff;
+  --accent-ink: #12152b;
+  --good: #6fd9ae;
+  --good-bg: #17392f;
+  --bad: #ff9c85;
+  --bad-bg: #472119;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-inline: 16px;
+  padding-block: 20px 40px;
+  min-height: 100vh;
+}
+.app { max-width: 640px; margin-inline: auto; display: flex; flex-direction: column; gap: 16px; }
+
+.hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+.stats { display: flex; gap: 18px; align-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+.stats b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.lives { display: flex; gap: 5px; }
+.life { width: 11px; height: 11px; border-radius: 50%; background: var(--accent); }
+.life.gone { background: transparent; box-shadow: inset 0 0 0 2px var(--line); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+h1, h2 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 6vw, 36px); }
+h2 { font-size: clamp(20px, 4.6vw, 26px); }
+p { margin: 0; color: var(--ink-soft); max-width: 65ch; }
+.head { display: flex; flex-direction: column; gap: 8px; }
+
+.btn {
+  font: inherit; font-weight: 700;
+  background: var(--accent); color: var(--accent-ink);
+  border: 0; border-radius: 10px;
+  padding: 13px 22px; cursor: pointer; align-self: flex-start;
+}
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.types { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.type { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.type b { font-family: var(--font-display); font-size: 13px; font-weight: 500; }
+.type span { font-size: 13px; color: var(--ink-soft); }
+
+.opt { display: flex; gap: 12px; align-items: flex-start; background: var(--surface-2); border-radius: 10px; padding: 12px 14px; cursor: pointer; }
+.opt input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.opt span { display: flex; flex-direction: column; gap: 2px; }
+.opt small { font-size: 13px; color: var(--ink-soft); }
+.tilewrap { display: flex; justify-content: center; perspective: 700px; }
+.tiles { display: grid; grid-template-columns: repeat(var(--g), 1fr); gap: 8px; width: min(100%, calc(var(--g) * 84px)); }
+.tile {
+  aspect-ratio: 1; border-radius: 10px; background: var(--surface-2); border: 2px solid transparent; padding: 0;
+  transition: transform 0.5s, background-color 0.25s 0.15s;
+}
+.tile.flip.shown, .tiles.shown .tile.flip { background: var(--accent); transform: rotateY(180deg); }
+button.tile { cursor: pointer; }
+button.tile[aria-pressed="true"] { background: var(--accent); border-color: var(--ink); }
+.tile.pick { transition: none; }
+.tile.ok { background: var(--good-bg); border-color: var(--good); }
+.tile.bad { background: var(--bad-bg); border-color: var(--bad); }
+.tile.miss { background: transparent; border: 2px dashed var(--good); }
+.levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.level {
+  font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+  background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.level:hover { border-color: var(--accent); }
+.level b { font-family: var(--font-display); font-size: 18px; }
+.level span { font-size: 14px; color: var(--ink-soft); }
+.level small { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); margin-top: auto; padding-top: 6px; }
+.bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; background: var(--accent); }
+
+/* objects */
+.objects { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+.obj {
+  aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--surface-2); border-radius: 12px; font-size: 38px; line-height: 1; gap: 6px;
+  border: 2px solid transparent; font-family: inherit; color: var(--ink);
+}
+.obj small { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
+button.obj { cursor: pointer; }
+button.obj[aria-pressed="true"] { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.obj.ok { background: var(--good-bg); border-color: var(--good); }
+.obj.bad { background: var(--bad-bg); border-color: var(--bad); }
+.obj.miss { border-style: dashed; border-color: var(--good); background: transparent; }
+
+/* numbers */
+.nums { display: flex; flex-wrap: wrap; gap: 10px; }
+.num {
+  font-family: var(--font-mono); font-weight: 500; font-size: clamp(26px, 7vw, 38px);
+  background: var(--surface-2); border-radius: 10px; padding: 8px 16px; font-variant-numeric: tabular-nums;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; letter-spacing: 0.04em;
+}
+.num small { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; }
+.num.ok { background: var(--good-bg); color: var(--good); }
+.num.bad { background: var(--bad-bg); color: var(--bad); }
+.nums input {
+  font-family: var(--font-mono); font-size: clamp(22px, 6vw, 30px); text-align: center;
+  background: var(--surface); color: var(--ink);
+  border: 2px solid var(--line); border-radius: 10px; padding: 8px 4px; width: calc(var(--d) * 1ch + 34px);
+}
+.nums input:focus { border-color: var(--accent); outline: none; }
+
+/* events */
+.timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: ev; }
+.timeline li {
+  counter-increment: ev; display: flex; gap: 14px; align-items: center;
+  background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-weight: 500;
+}
+.timeline li::before { content: counter(ev); font-family: var(--font-mono); color: var(--ink-soft); width: 1.4em; text-align: right; flex: none; }
+.timeline li.ok { background: var(--good-bg); }
+.timeline li.bad { background: var(--bad-bg); }
+.timeline li span.tag { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); text-align: right; }
+.timeline li.empty { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); color: var(--ink-soft); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: inherit; font-weight: 500; color: var(--ink); background: var(--surface-2);
+  border: 2px solid transparent; border-radius: 99px; padding: 9px 15px; cursor: pointer;
+}
+.chip:disabled { opacity: 0.3; cursor: default; }
+.label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+.verdict { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+.verdict.ok { color: var(--good); }
+.verdict.bad { color: var(--bad); }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(40px, 12vw, 64px); line-height: 1; font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) { .bar i, .tile { transition: none !important; } }
+body { margin: 0; padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+input[type="text"], input:not([type]) { font-size: 16px; }
+</style>
+
+</head>
+<body>
+<main class="app">
+  <header class="hud">
+    <div class="brand">Recall Ladder</div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+  <section class="card" id="view"></section>
+</main>
+
+<script>
+(function () {
+  var OBJECTS = ["🔑","🎈","🚲","🍎","🎸","⌚","🕯️","🌵","🧲","🪁","🔔","🍄","🧦","🪑","📷","🧭","🎩","🍋","🐢","🦉","🚪","🥕","🧩","🔭","🪴","🥁","🍩","🧢","🛎️","🪣","🎲","🧸","🖍️","🔦","🍐","🐙","🦆","🍒","🚁","⛺","📎","🧯","🪜","🎻","🥨","🐝","🧀","🛼","🪙","🍞","🦀","🌂","🧣","🥄","🔨","🏺","🪕","🧃","🐧","🍉"];
+  var EVENTS = ["The lights go out","A dog starts barking","The phone rings twice","A window slams shut","Someone knocks at the door","The kettle whistles","A car alarm goes off","It starts to rain","The elevator stops","A glass falls and breaks","The clock strikes noon","A bird lands on the sill","The power comes back","A letter slides under the door","Thunder rolls in the distance","The train pulls away","A child laughs upstairs","The fridge hums to a stop","A cat knocks over a plant","The doorbell rings","Music starts next door","A balloon pops","The wind blows the curtain","Someone whistles a tune","The oven timer beeps","A bicycle bell rings","The garage door opens","A siren passes by","The radio switches on","A coin rolls under the table","The floorboard creaks","Snow begins to fall","A helicopter flies over","The printer jams","A key turns in the lock","The alarm clock rings","A plate spins on the floor","Fireworks light the sky","The ice cream truck arrives","A door swings open"];
+  var SHORT_EVENTS = ["Lights out","Dog barks","Phone rings","Door slams","Rain starts","Glass breaks","Bell rings","Cat jumps","Kettle whistles","Wind blows","Baby laughs","Alarm beeps","Car honks","Snow falls","Thunder booms","Clock chimes","Bird sings","Knock knock","Train leaves","Music starts","Balloon pops","Key turns","Window opens","Coin drops","Siren wails","Oven beeps","Fridge hums","Plate falls","Fire crackles","Bike passes"];
+  var TYPES = ["objects", "numbers", "tiles", "events"];
+  var NAMES = { objects: "Objects", numbers: "Numbers", tiles: "Flipped tiles", events: "Events in order" };
+  var TILE_BASE = { 3: 3, 4: 5, 5: 7, 6: 9, 7: 11 };
+
+  var LEVELS = {
+    easy:   { name: "Easy",   blurb: "Starts with 3 items and grows slowly. Lots of time to look.",
+              start: 3, every: 3, cap: 10, shrink: 0.01, floor: 0.85, easeSpan: 16, easeRate: 0.06,
+              tiers: [10, 20, 30], tierRate: 0.1, longEvents: 10, decoyFrom: 8, gridEvery: 4 },
+    medium: { name: "Medium", blurb: "Starts with 4 items and grows steadily. Time tightens gently.",
+              start: 4, every: 2, cap: 12, shrink: 0.02, floor: 0.7, easeSpan: 10, easeRate: 0.1,
+              tiers: [6, 14, 22], tierRate: 0.15, longEvents: 5, decoyFrom: 4, gridEvery: 3 },
+    hard:   { name: "Hard",   blurb: "Starts with 5 items and climbs fast. Time shrinks quickly.",
+              start: 5, every: 1.33, cap: 14, shrink: 0.04, floor: 0.5, easeSpan: 4, easeRate: 0.08,
+              tiers: [3, 8, 14], tierRate: 0.2, longEvents: 3, decoyFrom: 3, gridEvery: 2 }
+  };
+  function L() { return LEVELS[S.level]; }
+
+  var view = document.getElementById("view");
+  var statsEl = document.getElementById("stats");
+  var S = null, timer = null;
+
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function sample(a, n) { return shuffle(a).slice(0, n); }
+  function getBest(lv) { try { return parseInt(localStorage.getItem("recall-best-" + (lv || S.level)) || "0", 10) || 0; } catch (e) { return 0; } }
+  function setBest(v) { try { localStorage.setItem("recall-best-" + S.level, String(v)); } catch (e) {} }
+  function getEvents() { try { return localStorage.getItem("recall-events") !== "off"; } catch (e) { return true; } }
+  function setEvents(v) { try { localStorage.setItem("recall-events", v ? "on" : "off"); } catch (e) {} }
+  function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+
+  function stats() {
+    if (!S) { statsEl.innerHTML = ""; return; }
+    var lives = "";
+    for (var i = 0; i < 3; i++) lives += '<i class="life' + (i < S.lives ? "" : " gone") + '"></i>';
+    statsEl.innerHTML = '<span>' + L().name + '</span><span>Stage <b>' + S.stage + '</b></span><span>Score <b>' + S.score + '</b></span><span class="lives" role="img" aria-label="' + S.lives + ' lives left">' + lives + "</span>";
+  }
+
+  function digitPlan(stage, n) {
+    var dl = [], i;
+    for (i = 0; i < n; i++) dl.push(1);
+    [{ from: L().tiers[0], d: 2 }, { from: L().tiers[1], d: 3 }, { from: L().tiers[2], d: 4 }].forEach(function (t) {
+      if (stage <= t.from) return;
+      var k = Math.min(n, Math.round(n * Math.min(1, (stage - t.from) * L().tierRate)));
+      var idx = shuffle(dl.map(function (g, j) { return j; }).filter(function (j) { return dl[j] < t.d; }));
+      idx.slice(0, k).forEach(function (j) { dl[j] = t.d; });
+    });
+    return dl;
+  }
+  function numDesc(d) {
+    if (d.maxD === 1) return "single digits";
+    var multi = d.dl.filter(function (g) { return g > 1; }).length;
+    return multi === d.n ? d.maxD + "-digit numbers" : "single digits, with " + multi + " of up to " + d.maxD + " digits";
+  }
+
+  function countFor(stage) { var l = L(); return Math.min(l.start + Math.floor((stage - 1) / l.every + (l.every < 2 ? 0.0001 : 0)) , l.cap); }
+  function secondsFor(type, stage, n, extra) {
+    var l = L();
+    var per = { objects: 1.4, numbers: 1.9, tiles: 1.7, events: 2.2 }[type];
+    var ease = 1 + Math.max(0, l.easeSpan - stage) * l.easeRate;
+    var shrink = Math.max(l.floor, 1 - l.shrink * stage);
+    return Math.max(7, Math.round((n * per * shrink + 2 + (extra || 0)) * ease));
+  }
+
+  /* ---------- start ---------- */
+  function showStart() {
+    clearTimer(); S = null; stats();
+    var cards = Object.keys(LEVELS).map(function (k) {
+      var l = LEVELS[k];
+      return '<button class="level" data-lv="' + k + '"><b>' + l.name + '</b><span>' + l.blurb + '</span><small>Best ' + getBest(k) + "</small></button>";
+    }).join("");
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Memory game</span><h1>How far up can you go?</h1>' +
+      "<p>Each stage shows you a short list for a few seconds, then asks for it back. Clear a stage and the next one gets longer and quicker. Miss one and you lose a life, but every correct answer still earns points. You have three lives.</p></div>" +
+      '<div class="types">' +
+      '<div class="type"><b>Objects</b><span>Pick the ones you saw from a crowded shelf.</span></div>' +
+      '<div class="type"><b>Numbers</b><span>Type them back in the same order.</span></div>' +
+      '<div class="type"><b>Flipped tiles</b><span>Find the tiles that flipped over in a square.</span></div>' +
+      '<div class="type"><b>Events</b><span>Rebuild what happened, first to last.</span></div></div>' +
+      '<label class="opt" for="evopt"><input type="checkbox" id="evopt"' + (getEvents() ? " checked" : "") + '><span><b>Include event stages</b><small>Events are short sentences in English. Turn this off for players who do not read English yet.</small></span></label>' +
+      '<div class="head"><div class="label">Choose a level</div></div>' +
+      '<div class="levels">' + cards + "</div>";
+    document.getElementById("evopt").onchange = function () { setEvents(this.checked); };
+    view.onclick = function (e) {
+      var b = e.target.closest("button.level"); if (!b) return;
+      view.onclick = null;
+      startGame(b.getAttribute("data-lv"));
+    };
+  }
+  function startGame(lv) {
+    S = { level: lv, events: getEvents(), stage: 1, lives: 3, score: 0, streak: 0, last: null };
+    newStage();
+  }
+
+  /* ---------- stage setup ---------- */
+  function newStage() {
+    var opts = TYPES.filter(function (t) { return t !== S.last && (S.events || t !== "events"); });
+    var type = opts[rnd(opts.length)];
+    S.last = type;
+    var n = countFor(S.stage);
+    var d = { type: type, n: n, secs: 0 };
+    if (type === "objects") {
+      d.items = sample(OBJECTS, n);
+      var total = Math.min(n * 2, 24);
+      var rest = OBJECTS.filter(function (o) { return d.items.indexOf(o) < 0; });
+      d.choices = shuffle(d.items.concat(sample(rest, total - n)));
+    } else if (type === "numbers") {
+      d.dl = digitPlan(S.stage, n);
+      var seen = {}, arr = [];
+      d.dl.forEach(function (dg) {
+        var lo = dg === 1 ? 0 : Math.pow(10, dg - 1), hi = Math.pow(10, dg) - 1, v, tries = 0;
+        do { v = String(lo + rnd(hi - lo + 1)); tries++; } while (seen[v] && tries < 50);
+        seen[v] = 1; arr.push(v);
+      });
+      d.items = arr;
+      d.maxD = Math.max.apply(null, d.dl);
+      d.extra = d.dl.reduce(function (a, g) { return a + (g - 1) * 0.8; }, 0);
+    } else if (type === "tiles") {
+      var l = L(), g = Math.min(7, 3 + Math.floor((S.stage - 1) / l.gridEvery));
+      var t = (S.stage - 1) % l.gridEvery;
+      var k = TILE_BASE[g] + (t >= Math.ceil(l.gridEvery / 2) ? 1 : 0);
+      d.g = g; d.n = k;
+      var all = []; for (var q = 0; q < g * g; q++) all.push(q);
+      d.items = sample(all, k);
+      d.extra = g * 0.5;
+    } else {
+      var src = S.stage < L().longEvents ? SHORT_EVENTS : EVENTS;
+      d.items = sample(src, n);
+      var extra = S.stage < L().decoyFrom ? 0 : Math.min(4, 1 + Math.floor((S.stage - L().decoyFrom) / 2));
+      var pool = src.filter(function (e) { return d.items.indexOf(e) < 0; });
+      d.choices = shuffle(d.items.concat(sample(pool, extra)));
+    }
+    d.secs = secondsFor(type, S.stage, d.n, d.extra);
+    S.d = d; stats(); showIntro();
+  }
+
+  function showIntro() {
+    var d = S.d;
+    var what = d.type === "objects" ? d.n + " objects" : d.type === "numbers" ? d.n + " numbers (" + numDesc(d) + ")" : d.type === "tiles" ? "which " + d.n + " tiles flip over on the " + d.g + " by " + d.g + " square" : d.n + " events, in order";
+    var tip = d.type === "objects" || d.type === "tiles" ? "Order does not matter." : d.type === "numbers" ? "Order matters." : d.choices.length > d.n ? "Order matters. Some choices will be events you never saw." : "Order matters.";
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + '</span><h2>' + NAMES[d.type] + '</h2><p>Remember ' + what + '. You get ' + d.secs + ' seconds. ' + tip + '</p></div>' +
+      '<button class="btn" id="show">Show me</button>';
+    document.getElementById("show").focus();
+    document.getElementById("show").onclick = memorize;
+  }
+
+  /* ---------- memorize ---------- */
+  function memorize() {
+    var d = S.d, body = "";
+    if (d.type === "objects") {
+      body = '<div class="objects">' + d.items.map(function (o) { return '<div class="obj" aria-label="object">' + o + "</div>"; }).join("") + "</div>";
+    } else if (d.type === "numbers") {
+      body = '<div class="nums">' + d.items.map(function (x, i) { return '<div class="num"><small>' + (i + 1) + "</small>" + x + "</div>"; }).join("") + "</div>";
+    } else if (d.type === "tiles") {
+      var cells = "";
+      for (var q = 0; q < d.g * d.g; q++) cells += '<div class="tile' + (d.items.indexOf(q) >= 0 ? " flip" : "") + '"></div>';
+      body = '<div class="tilewrap"><div class="tiles" id="tgrid" style="--g:' + d.g + '">' + cells + "</div></div>";
+    } else {
+      body = '<ol class="timeline">' + d.items.map(function (e) { return "<li>" + e + "</li>"; }).join("") + "</ol>";
+    }
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + " · " + NAMES[d.type] + '</span><h2>Memorize</h2></div>' +
+      body +
+      '<div class="bar" aria-hidden="true"><i id="fill"></i></div>' +
+      '<button class="btn ghost" id="ready">I have it</button>';
+    var fill = document.getElementById("fill");
+    var tg = document.getElementById("tgrid");
+    if (tg) setTimeout(function () { tg.classList.add("shown"); }, 400);
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      fill.style.transition = "width " + d.secs + "s linear";
+      fill.style.width = "0%";
+    }); });
+    clearTimer();
+    timer = setTimeout(recall, d.secs * 1000);
+    document.getElementById("ready").onclick = recall;
+  }
+
+  /* ---------- recall ---------- */
+  function recall() {
+    clearTimer();
+    var d = S.d;
+    if (d.type === "objects") recallObjects();
+    else if (d.type === "numbers") recallNumbers();
+    else if (d.type === "tiles") recallTiles();
+    else recallEvents();
+  }
+
+  function recallObjects() {
+    var d = S.d, picked = {};
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + " · Objects</span><h2>Which " + d.n + " did you see?</h2><p id=\"count\"></p></div>" +
+      '<div class="objects" id="grid">' + d.choices.map(function (o, i) { return '<button class="obj" aria-pressed="false" data-i="' + i + '">' + o + "</button>"; }).join("") + "</div>" +
+      '<button class="btn" id="check" disabled>Check</button>';
+    var count = document.getElementById("count"), check = document.getElementById("check");
+    function upd() {
+      var c = Object.keys(picked).length;
+      count.textContent = c + " of " + d.n + " selected";
+      check.disabled = c !== d.n;
+    }
+    upd();
+    document.getElementById("grid").onclick = function (e) {
+      var b = e.target.closest("button.obj"); if (!b) return;
+      var i = b.getAttribute("data-i");
+      if (picked[i]) { delete picked[i]; b.setAttribute("aria-pressed", "false"); }
+      else if (Object.keys(picked).length < d.n) { picked[i] = 1; b.setAttribute("aria-pressed", "true"); }
+      upd();
+    };
+    check.onclick = function () {
+      var ans = Object.keys(picked).map(function (i) { return d.choices[+i]; });
+      var right = d.items.filter(function (o) { return ans.indexOf(o) >= 0; }).length;
+      var cells = d.choices.map(function (o) {
+        var inSet = d.items.indexOf(o) >= 0, chosen = ans.indexOf(o) >= 0;
+        var cls = chosen && inSet ? "ok" : chosen ? "bad" : inSet ? "miss" : "";
+        return '<div class="obj ' + cls + '">' + o + "</div>";
+      }).join("");
+      finish(right === d.n, right + " of " + d.n + " correct",
+        '<div class="objects">' + cells + '</div><div class="legend"><span>Solid green: found</span><span>Dashed green: missed</span><span>Red: not in the list</span></div>', right);
+    };
+  }
+
+  function recallTiles() {
+    var d = S.d, picked = {}, cells = "";
+    for (var q = 0; q < d.g * d.g; q++) cells += '<button class="tile pick" aria-pressed="false" aria-label="Tile ' + (q + 1) + '" data-i="' + q + '"></button>';
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + " · Flipped tiles</span><h2>Which " + d.n + " tiles flipped?</h2><p id=\"count\"></p></div>" +
+      '<div class="tilewrap"><div class="tiles shown" id="grid" style="--g:' + d.g + '">' + cells + "</div></div>" +
+      '<button class="btn" id="check" disabled>Check</button>';
+    var count = document.getElementById("count"), check = document.getElementById("check");
+    function upd() {
+      var c = Object.keys(picked).length;
+      count.textContent = c + " of " + d.n + " selected";
+      check.disabled = c !== d.n;
+    }
+    upd();
+    document.getElementById("grid").onclick = function (e) {
+      var b = e.target.closest("button.tile"); if (!b) return;
+      var i = b.getAttribute("data-i");
+      if (picked[i]) { delete picked[i]; b.setAttribute("aria-pressed", "false"); }
+      else if (Object.keys(picked).length < d.n) { picked[i] = 1; b.setAttribute("aria-pressed", "true"); }
+      upd();
+    };
+    check.onclick = function () {
+      var right = 0, out = "";
+      for (var q = 0; q < d.g * d.g; q++) {
+        var inSet = d.items.indexOf(q) >= 0, chosen = !!picked[q];
+        if (inSet && chosen) right++;
+        out += '<div class="tile shown ' + (chosen && inSet ? "ok" : chosen ? "bad" : inSet ? "miss" : "") + '"></div>';
+      }
+      finish(right === d.n, right + " of " + d.n + " correct",
+        '<div class="tilewrap"><div class="tiles shown" style="--g:' + d.g + '">' + out + '</div></div><div class="legend"><span>Solid green: found</span><span>Dashed green: missed</span><span>Red: not flipped</span></div>', right);
+    };
+  }
+
+  function recallNumbers() {
+    var d = S.d;
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + " · Numbers</span><h2>Type them back in order</h2><p>" + d.n + " numbers (" + numDesc(d) + "). Each field is sized to its number and moves on by itself.</p></div>" +
+      '<div class="nums" id="fields">' + d.items.map(function (x, i) {
+        return '<input id="n' + i + '" style="--d:' + d.dl[i] + '" inputmode="numeric" autocomplete="off" maxlength="' + d.dl[i] + '" aria-label="Number ' + (i + 1) + '">';
+      }).join("") + "</div>" +
+      '<button class="btn" id="check">Check</button>';
+    var inputs = d.items.map(function (x, i) { return document.getElementById("n" + i); });
+    inputs.forEach(function (el, i) {
+      el.addEventListener("input", function () {
+        el.value = el.value.replace(/\D/g, "");
+        if (el.value.length >= d.dl[i] && inputs[i + 1]) inputs[i + 1].focus();
+      });
+      el.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); document.getElementById("check").click(); }
+        if (e.key === "Backspace" && !el.value && inputs[i - 1]) inputs[i - 1].focus();
+      });
+    });
+    inputs[0].focus();
+    document.getElementById("check").onclick = function () {
+      var right = 0;
+      var cells = d.items.map(function (x, i) {
+        var v = inputs[i].value, ok = v === x; if (ok) right++;
+        return '<div class="num ' + (ok ? "ok" : "bad") + '"><small>' + (i + 1) + "</small>" + x + (ok ? "" : '<small>you: ' + (v || "blank") + "</small>") + "</div>";
+      }).join("");
+      finish(right === d.n, right + " of " + d.n + " correct", '<div class="nums">' + cells + "</div>", right);
+    };
+  }
+
+  function recallEvents() {
+    var d = S.d, ans = [];
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Stage ' + S.stage + " · Events</span><h2>What happened, first to last?</h2><p>" +
+      (d.choices.length > d.n ? "Tap the events you saw, in order. " + (d.choices.length - d.n) + " of the choices are decoys. Tap a placed event to remove it." : "Tap the events in the order they happened. Tap a placed event to remove it.") + "</p></div>" +
+      '<div><div class="label" style="margin-bottom:8px">Your order</div><ol class="timeline" id="slots"></ol></div>' +
+      '<div><div class="label" style="margin-bottom:8px">Choices</div><div class="chips" id="chips"></div></div>' +
+      '<button class="btn" id="check" disabled>Check</button>';
+    var slots = document.getElementById("slots"), chips = document.getElementById("chips"), check = document.getElementById("check");
+    function draw() {
+      slots.innerHTML = "";
+      for (var i = 0; i < d.n; i++) {
+        var li = document.createElement("li");
+        if (ans[i] !== undefined) {
+          li.innerHTML = '<button class="chip" data-r="' + i + '" style="flex:1;text-align:left;border-radius:8px"></button>';
+          li.firstChild.textContent = d.choices[ans[i]];
+        } else { li.className = "empty"; li.textContent = "empty"; }
+        slots.appendChild(li);
+      }
+      chips.innerHTML = "";
+      d.choices.forEach(function (e, i) {
+        var b = document.createElement("button");
+        b.className = "chip"; b.textContent = e; b.setAttribute("data-a", i);
+        if (ans.indexOf(i) >= 0) b.disabled = true;
+        chips.appendChild(b);
+      });
+      check.disabled = ans.length !== d.n;
+    }
+    draw();
+    chips.onclick = function (e) {
+      var b = e.target.closest("button[data-a]"); if (!b || ans.length >= d.n) return;
+      ans.push(+b.getAttribute("data-a")); draw();
+    };
+    slots.onclick = function (e) {
+      var b = e.target.closest("button[data-r]"); if (!b) return;
+      ans.splice(+b.getAttribute("data-r"), 1); draw();
+    };
+    check.onclick = function () {
+      var right = 0;
+      var rows = d.items.map(function (ev, i) {
+        var got = d.choices[ans[i]], ok = got === ev; if (ok) right++;
+        return '<li class="' + (ok ? "ok" : "bad") + '">' + ev + (ok ? "" : '<span class="tag">you: ' + got + "</span>") + "</li>";
+      }).join("");
+      finish(right === d.n, right + " of " + d.n + " in the right place", '<ol class="timeline">' + rows + "</ol>", right);
+    };
+  }
+
+  /* ---------- result ---------- */
+  function finish(pass, summary, detail, right) {
+    var gained = 0;
+    if (pass) {
+      S.streak++;
+      gained = S.d.n * 10 + (S.streak - 1) * 5;
+    } else { S.streak = 0; S.lives--; gained = right * 5; }
+    S.score += gained;
+    if (S.score > getBest()) setBest(S.score);
+    stats();
+    var over = S.lives <= 0;
+    var verdict = pass ? '<div class="verdict ok">Stage cleared · +' + gained + "</div>" : '<div class="verdict bad">Not quite · +' + gained + (over ? "" : " · lost a life") + "</div>";
+    var btn = over ? '<button class="btn" id="next">See results</button>' : pass ? '<button class="btn" id="next">Go to stage ' + (S.stage + 1) + "</button>" : '<button class="btn" id="next">Try stage ' + S.stage + " again</button>";
+    view.innerHTML = verdict + '<p style="color:var(--ink)">' + summary + (pass ? "" : ". You earn 5 points for each one you got right.") + "</p>" + detail + btn;
+    var nb = document.getElementById("next"); nb.focus();
+    nb.onclick = function () {
+      if (over) return gameOver();
+      if (pass) S.stage++;
+      newStage();
+    };
+  }
+
+  function gameOver() {
+    var best = getBest(), reached = S.stage;
+    view.innerHTML =
+      '<div class="head"><span class="eyebrow">Game over · ' + L().name + '</span><h2>You reached stage ' + reached + "</h2></div>" +
+      '<div class="row" style="gap:28px"><div><div class="label">Score</div><div class="big">' + S.score + '</div></div><div><div class="label">Best</div><div class="big">' + best + "</div></div></div>" +
+      (S.score >= best && S.score > 0 ? "<p>That is your best score on this device.</p>" : "") +
+      '<div class="row"><button class="btn" id="again">Play again</button><button class="btn ghost" id="menu">Change level</button></div>';
+    document.getElementById("again").onclick = function () { startGame(S.level); };
+    document.getElementById("menu").onclick = showStart;
+  }
+
+  showStart();
+})();
+</script>
+
+</body>
+</html>
