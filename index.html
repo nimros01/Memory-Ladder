@@ -28,6 +28,11 @@
   --good-bg: #d6f1e6;
   --bad: #b8371f;
   --bad-bg: #f9dcd5;
+  --grid: #dde0f0;
+  --c-objects: #2a78d6;
+  --c-numbers: #eb6834;
+  --c-tiles: #1baf7a;
+  --c-events: #4a3aa7;
   --font-display: "Unbounded", "Trebuchet MS", system-ui, sans-serif;
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -47,6 +52,11 @@
     --good-bg: #17392f;
     --bad: #ff9c85;
     --bad-bg: #472119;
+    --grid: #2e3462;
+    --c-objects: #3987e5;
+    --c-numbers: #d95926;
+    --c-tiles: #199e70;
+    --c-events: #9085e9;
   }
 }
 :root[data-theme="dark"] {
@@ -63,6 +73,11 @@
   --good-bg: #17392f;
   --bad: #ff9c85;
   --bad-bg: #472119;
+  --grid: #2e3462;
+  --c-objects: #3987e5;
+  --c-numbers: #d95926;
+  --c-tiles: #199e70;
+  --c-events: #9085e9;
 }
 
 * { box-sizing: border-box; }
@@ -204,6 +219,74 @@ button.obj[aria-pressed="true"] { border-color: var(--accent); background: var(-
 .verdict.bad { color: var(--bad); }
 .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(40px, 12vw, 64px); line-height: 1; font-variant-numeric: tabular-nums; }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--ink-soft); }
+
+[hidden] { display: none !important; }
+.app.wide { max-width: 860px; }
+.btn.small { padding: 8px 14px; font-size: 14px; }
+.playerbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; background: var(--surface-2); border-radius: 10px; padding: 12px 14px; }
+.playerbar .chips { flex: 1 1 220px; align-items: center; }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: var(--surface); }
+.chip.add { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
+select, .txt { font: inherit; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; max-width: 100%; }
+textarea.txt { width: 100%; font-family: var(--font-mono); font-size: 13px; }
+.statshead { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.statshead > div { display: flex; flex-direction: column; gap: 6px; }
+.filters { display: flex; flex-wrap: wrap; gap: 12px; }
+.filters label, .inl { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+.inl { flex-direction: row; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 14px; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); }
+.tab { font: inherit; font-weight: 500; background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 12px; color: var(--ink-soft); cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+#tabbody { display: flex; flex-direction: column; gap: 24px; }
+.sec { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+h3 { font-family: var(--font-display); font-weight: 500; font-size: 16px; margin: 0; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.kpi { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.kpi > span, .kpi small { font-size: 13px; color: var(--ink-soft); }
+.kpi b { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.2; }
+.notes { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.notes li, .cmp, .note, .emptymsg { color: var(--ink-soft); max-width: 70ch; margin: 0; }
+.notes b, .cmp b { color: var(--ink); }
+.note { font-size: 13px; }
+.warn { color: var(--bad); background: var(--bad-bg); border-radius: 8px; padding: 10px 12px; }
+.tblwrap, .scroll { overflow-x: auto; }
+.tbl { border-collapse: collapse; width: 100%; font-size: 14px; }
+.tbl th, .tbl td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl thead th { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 400; white-space: nowrap; }
+.tbl tbody th { font-weight: 500; white-space: nowrap; }
+.tbl td { font-variant-numeric: tabular-nums; }
+.tbl td small { display: block; color: var(--ink-soft); font-size: 12px; }
+.tbl td div small { display: inline; }
+.tbl td.na { color: var(--ink-soft); }
+.plist { display: flex; flex-direction: column; }
+.prow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.prow .txt { flex: 1 1 140px; min-width: 0; }
+.prow .pn { font-size: 13px; color: var(--ink-soft); }
+.acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.mx td { white-space: nowrap; }
+.mx td.heat { background: color-mix(in srgb, var(--accent) calc(var(--v) * 30%), transparent); }
+.mx td.heat b { font-weight: 700; }
+.mbar { display: inline-block; width: 80px; height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+.mbar i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; }
+.chartbox { min-height: 190px; }
+.chartbox svg { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.lg { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); }
+.lk { display: inline-block; width: 16px; height: 3px; border-radius: 2px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.sw.hatch { background: repeating-linear-gradient(45deg, var(--bad) 0 2px, var(--bad-bg) 2px 5px); }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.base { stroke: var(--line); stroke-width: 1; }
+.ax { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-soft); }
+.xh { stroke: var(--ink-soft); stroke-width: 1; }
+.hit { fill: transparent; touch-action: pan-y; }
+.gh { fill: transparent; touch-action: pan-y; }
+.gh:hover { fill: var(--ink); fill-opacity: 0.06; }
+.tv summary { cursor: pointer; font-size: 13px; color: var(--ink-soft); padding: 4px 0; }
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg); border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.5; box-shadow: 0 4px 14px rgba(0,0,0,0.25); max-width: 240px; }
+.tip b { font-weight: 700; margin-left: 6px; }
+.tip .lk { margin-right: 6px; vertical-align: middle; }
+.tt-h { opacity: 0.75; font-size: 12px; margin-bottom: 2px; }
 @media (prefers-reduced-motion: reduce) { .bar i, .tile { transition: none !important; } }
 body { margin: 0; padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
@@ -244,29 +327,22 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
   var view = document.getElementById("view");
   var statsEl = document.getElementById("stats");
   var S = null, timer = null;
+  function setWide(b) { document.querySelector(".app").classList.toggle("wide", !!b); }
 
   function rnd(n) { return Math.floor(Math.random() * n); }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function sample(a, n) { return shuffle(a).slice(0, n); }
-  function getBest(lv) { try { return parseInt(localStorage.getItem("recall-best-" + (lv || S.level)) || "0", 10) || 0; } catch (e) { return 0; } }
-  function setBest(v) { try { localStorage.setItem("recall-best-" + S.level, String(v)); } catch (e) {} }
-  function getPBest(t, lv) { try { return parseInt(localStorage.getItem("recall-pbest-" + t + "-" + lv) || "0", 10) || 0; } catch (e) { return 0; } }
-  function setPBest(v) { try { localStorage.setItem("recall-pbest-" + S.practice + "-" + S.level, String(v)); } catch (e) {} }
-  function getSingle() { try { return localStorage.getItem("recall-single") === "on"; } catch (e) { return false; } }
-  function setSingle(v) { try { localStorage.setItem("recall-single", v ? "on" : "off"); } catch (e) {} }
-  function getEvents() { try { return localStorage.getItem("recall-events") !== "off"; } catch (e) { return true; } }
-  function setEvents(v) { try { localStorage.setItem("recall-events", v ? "on" : "off"); } catch (e) {} }
   function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
 
   function stats() {
     if (!S) { statsEl.innerHTML = ""; return; }
     if (S.practice) {
-      statsEl.innerHTML = '<span>Practice · ' + NAMES[S.practice] + '</span><span>' + L().name + '</span><span>Stage <b>' + S.stage + '</b></span><span>Score <b>' + S.score + '</b></span>';
+      statsEl.innerHTML = '<span>' + esc(curPlayer().name) + '</span><span>Practice · ' + NAMES[S.practice] + '</span><span>' + L().name + '</span><span>Stage <b>' + S.stage + '</b></span><span>Score <b>' + S.score + '</b></span>';
       return;
     }
     var lives = "";
     for (var i = 0; i < 3; i++) lives += '<i class="life' + (i < S.lives ? "" : " gone") + '"></i>';
-    statsEl.innerHTML = '<span>' + L().name + '</span><span>Stage <b>' + S.stage + '</b></span><span>Score <b>' + S.score + '</b></span><span class="lives" role="img" aria-label="' + S.lives + ' lives left">' + lives + "</span>";
+    statsEl.innerHTML = '<span>' + esc(curPlayer().name) + '</span><span>' + L().name + '</span><span>Stage <b>' + S.stage + '</b></span><span>Score <b>' + S.score + '</b></span><span class="lives" role="img" aria-label="' + S.lives + ' lives left">' + lives + "</span>";
   }
 
   function digitPlan(stage, n) {
@@ -298,12 +374,13 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
 
   /* ---------- start ---------- */
   function showStart() {
-    clearTimer(); S = null; stats();
+    clearTimer(); S = null; stats(); setWide(false); hideTip();
     var cards = Object.keys(LEVELS).map(function (k) {
       var l = LEVELS[k];
       return '<button class="level" data-lv="' + k + '"><b>' + l.name + '</b><span>' + l.blurb + '</span><small>Best ' + getBest(k) + "</small></button>";
     }).join("");
     view.innerHTML =
+      playerBarHTML() +
       '<div class="head"><span class="eyebrow">Memory game</span><h1>How far up can you go?</h1>' +
       "<p>Each stage shows you a short list for a few seconds, then asks for it back. Clear a stage and the next one gets longer and quicker. Miss one and you lose a life, but every correct answer still earns points. You have three lives.</p></div>" +
       '<div class="types">' +
@@ -319,6 +396,12 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       '<div class="levels" id="ptypes">' + TYPES.filter(function (t) { return getEvents() || t !== "events"; }).map(function (t) {
         return '<button class="level" data-pt="' + t + '"><b>' + NAMES[t] + '</b></button>';
       }).join("") + "</div>";
+    bindPlayerBar();
+    document.getElementById("mystats").onclick = function () { view.onclick = null; showStats(); };
+    document.getElementById("addplayer") && (document.getElementById("addplayer").onclick = function () { addingPlayer = true; showStart(); });
+    view.querySelectorAll("button[data-player]").forEach(function (b) {
+      b.onclick = function (ev) { ev.stopPropagation(); DB.current = b.getAttribute("data-player"); saveDB(); showStart(); };
+    });
     document.getElementById("sgopt").onchange = function () { setSingle(this.checked); };
     var evopt = document.getElementById("evopt");
     evopt.onchange = function () { setEvents(this.checked); showStart(); };
@@ -331,7 +414,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
     };
   }
   function showPractice(type) {
-    clearTimer(); S = null; stats();
+    clearTimer(); S = null; stats(); setWide(false);
     var cards = Object.keys(LEVELS).map(function (k) {
       var l = LEVELS[k], pb = getPBest(type, k);
       return '<button class="level" data-lv="' + k + '"><b>' + l.name + '</b><span>' + l.blurb + '</span><small>Furthest stage ' + pb + "</small></button>";
@@ -348,7 +431,8 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
     };
   }
   function startGame(lv, practice) {
-    S = { level: lv, practice: practice || null, events: getEvents(), single: getSingle(), stage: 1, lives: 3, score: 0, streak: 0, last: null };
+    setWide(false);
+    S = { sid: uid(), level: lv, practice: practice || null, events: getEvents(), single: getSingle(), stage: 1, lives: 3, score: 0, streak: 0, last: null };
     newStage();
   }
 
@@ -407,6 +491,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
 
   /* ---------- memorize ---------- */
   function memorize() {
+    S.tShow = performance.now();
     var d = S.d, body = "";
     if (d.type === "objects") {
       body = '<div class="objects">' + d.items.map(function (o) { return '<div class="obj" aria-label="object">' + o + "</div>"; }).join("") + "</div>";
@@ -439,6 +524,8 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
   /* ---------- recall ---------- */
   function recall() {
     clearTimer();
+    S.viewMs = Math.round(performance.now() - (S.tShow || performance.now()));
+    S.tRecall = performance.now();
     var d = S.d;
     if (d.type === "objects") recallObjects();
     else if (d.type === "numbers") recallNumbers();
@@ -597,8 +684,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       gained = S.d.n * 10 + (S.streak - 1) * 5;
     } else { S.streak = 0; if (!S.practice) S.lives--; gained = right * 5; }
     S.score += gained;
-    if (S.practice) { if (pass && S.stage > getPBest(S.practice, S.level)) setPBest(S.stage); }
-    else if (S.score > getBest()) setBest(S.score);
+    recordAttempt(pass, right, Math.round(performance.now() - (S.tRecall || performance.now())));
     stats();
     var over = !S.practice && S.lives <= 0;
     var verdict = pass ? '<div class="verdict ok">Stage cleared · +' + gained + "</div>" : '<div class="verdict bad">Not quite · +' + gained + (over || S.practice ? "" : " · lost a life") + "</div>";
@@ -621,10 +707,689 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       '<div class="head"><span class="eyebrow">Game over · ' + L().name + '</span><h2>You reached stage ' + reached + "</h2></div>" +
       '<div class="row" style="gap:28px"><div><div class="label">Score</div><div class="big">' + S.score + '</div></div><div><div class="label">Best</div><div class="big">' + best + "</div></div></div>" +
       (S.score >= best && S.score > 0 ? "<p>That is your best score on this device.</p>" : "") +
-      '<div class="row"><button class="btn" id="again">Play again</button><button class="btn ghost" id="menu">Change level</button></div>';
+      '<div class="row"><button class="btn" id="again">Play again</button><button class="btn ghost" id="menu">Change level</button><button class="btn ghost" id="gostats">My statistics</button></div>';
     document.getElementById("again").onclick = function () { startGame(S.level); };
     document.getElementById("menu").onclick = showStart;
+    document.getElementById("gostats").onclick = function () { showStats(); };
   }
+
+  /* =====================================================================
+     STATISTICS: players, recording, stats screens, export / import
+     ===================================================================== */
+  var DB_KEY = "recall-stats-v1";
+  var DB = { app: "recall-ladder", version: 1, players: [], current: null, attempts: [] };
+  var saveOk = true;
+  var addingPlayer = false;
+  var LV_ORDER = ["easy", "medium", "hard"];
+  var TCOL = { objects: "var(--c-objects)", numbers: "var(--c-numbers)", tiles: "var(--c-tiles)", events: "var(--c-events)" };
+  var ST = { tab: "overview", mode: "all", type: "all", level: "all" };
+  var charts = [];
+  var armed = null;
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function esc(x) { return String(x).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function saveDB() { try { localStorage.setItem(DB_KEY, JSON.stringify(DB)); saveOk = true; } catch (e) { saveOk = false; } }
+  function curPlayer() { for (var i = 0; i < DB.players.length; i++) if (DB.players[i].id === DB.current) return DB.players[i]; return null; }
+  function loadDB() {
+    try {
+      var raw = localStorage.getItem(DB_KEY);
+      if (raw) { var o = JSON.parse(raw); if (o && Array.isArray(o.players) && Array.isArray(o.attempts)) DB = o; }
+    } catch (e) {}
+    if (!DB.players.length) {
+      var p = { id: uid(), name: "Player 1", created: Date.now(), events: true, single: false };
+      try { p.events = localStorage.getItem("recall-events") !== "off"; p.single = localStorage.getItem("recall-single") === "on"; } catch (e) {}
+      DB.players.push(p); DB.current = p.id; saveDB();
+    }
+    if (!curPlayer()) { DB.current = DB.players[0].id; saveDB(); }
+  }
+
+  /* per-player settings */
+  function getEvents() { var p = curPlayer(); return p ? p.events !== false : true; }
+  function setEvents(v) { var p = curPlayer(); if (p) { p.events = !!v; saveDB(); } }
+  function getSingle() { var p = curPlayer(); return p ? !!p.single : false; }
+  function setSingle(v) { var p = curPlayer(); if (p) { p.single = !!v; saveDB(); } }
+
+  /* bests come from the recorded attempts of the current player */
+  function getBest(lv) {
+    lv = lv || S.level; var b = 0;
+    DB.attempts.forEach(function (a) { if (a.player === DB.current && a.mode === "game" && a.level === lv && a.score > b) b = a.score; });
+    return b;
+  }
+  function getPBest(t, lv) {
+    var b = 0;
+    DB.attempts.forEach(function (a) { if (a.player === DB.current && a.mode === "practice" && a.type === t && a.level === lv && a.cleared && a.stage > b) b = a.stage; });
+    return b;
+  }
+
+  function recordAttempt(pass, right, ansMs) {
+    var d = S.d;
+    var a = {
+      id: uid(), player: DB.current, time: Date.now(), session: S.sid,
+      mode: S.practice ? "practice" : "game", type: d.type, level: S.level, stage: S.stage,
+      items: d.n, right: right, cleared: pass ? 1 : 0,
+      answerMs: ansMs, viewMs: S.viewMs || 0, allowedSec: d.secs, score: S.score, single: S.single ? 1 : 0
+    };
+    if (d.type === "numbers") a.digits = d.maxD;
+    if (d.type === "tiles") a.grid = d.g;
+    DB.attempts.push(a); saveDB();
+  }
+
+  /* ---------- tooltip ---------- */
+  var tipEl = document.createElement("div");
+  tipEl.className = "tip"; tipEl.hidden = true; document.body.appendChild(tipEl);
+  function showTip(html, x, y) {
+    tipEl.innerHTML = html; tipEl.hidden = false;
+    var w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+    var nx = Math.max(8, Math.min(window.innerWidth - w - 8, x + 12));
+    var ny = y - h - 14; if (ny < 8) ny = y + 18;
+    tipEl.style.left = nx + "px"; tipEl.style.top = ny + "px";
+  }
+  function hideTip() { tipEl.hidden = true; }
+
+  /* ---------- numbers and dates ---------- */
+  function mean(a) { if (!a.length) return null; var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
+  function pct(x) { return x == null ? "–" : Math.round(x) + "%"; }
+  function secs(x) { return x == null ? "–" : x.toFixed(1) + "s"; }
+  function okTime(a) { return a.answerMs > 0 && a.answerMs < 180000; }
+  function dayNum(t) { var d = new Date(t); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+  function dayLabel(n) { return new Date(n * 86400000).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" }); }
+  function niceScale(max, target) {
+    if (!(max > 0)) return { step: 1, max: target };
+    var raw = max / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    var step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    return { step: step, max: Math.ceil(max / step - 1e-9) * step };
+  }
+  function ticksOf(sc) { var t = []; for (var v = 0; v <= sc.max + 1e-9; v += sc.step) t.push(v); return t; }
+
+  /* ---------- data slices ---------- */
+  function mine() { return DB.attempts.filter(function (a) { return a.player === DB.current; }); }
+  function filtered(skip) {
+    skip = skip || [];
+    return mine().filter(function (a) {
+      return (ST.mode === "all" || a.mode === ST.mode) &&
+        (skip.indexOf("type") >= 0 || ST.type === "all" || a.type === ST.type) &&
+        (skip.indexOf("level") >= 0 || ST.level === "all" || a.level === ST.level);
+    }).sort(function (x, y) { return x.time - y.time; });
+  }
+  function agg(list) {
+    var items = 0, right = 0, cleared = 0, misses = 0, oneShort = 0, ok = [], bad = [], all = [], spi = [], use = [], early = 0;
+    list.forEach(function (a) {
+      items += a.items; right += a.right;
+      if (a.cleared) cleared++; else { misses++; if (a.right === a.items - 1) oneShort++; }
+      if (okTime(a)) { var s = a.answerMs / 1000; all.push(s); (a.cleared ? ok : bad).push(s); spi.push(s / a.items); }
+      if (a.allowedSec > 0 && a.viewMs > 0) { var u = Math.min(1, a.viewMs / (a.allowedSec * 1000)); use.push(u); if (u < 0.9) early++; }
+    });
+    return {
+      n: list.length, cleared: cleared, misses: misses,
+      clearPct: list.length ? 100 * cleared / list.length : null,
+      recallPct: items ? 100 * right / items : null,
+      ansAll: mean(all), ansOk: mean(ok), ansBad: mean(bad), nOk: ok.length, nBad: bad.length, spi: mean(spi),
+      use: use.length ? 100 * mean(use) : null, earlyPct: use.length ? 100 * early / use.length : null,
+      oneShortPct: misses ? 100 * oneShort / misses : null
+    };
+  }
+  function scopeText() {
+    return (ST.type === "all" ? "all types" : NAMES[ST.type]) + ", " + (ST.level === "all" ? "all levels" : LEVELS[ST.level].name);
+  }
+  function groupBy(list, keyFn) {
+    var m = {}, keys = [];
+    list.forEach(function (a) { var k = keyFn(a); if (k == null) return; if (!m[k]) { m[k] = []; keys.push(k); } m[k].push(a); });
+    return { map: m, keys: keys };
+  }
+
+  /* ---------- small html helpers ---------- */
+  function matrixHTML(list, cell) {
+    var types = TYPES.filter(function (t) { return t !== "events" || list.some(function (a) { return a.type === "events"; }); });
+    var h = '<div class="tblwrap"><table class="tbl mx"><thead><tr><th></th>' + LV_ORDER.map(function (k) { return "<th>" + LEVELS[k].name + "</th>"; }).join("") + "<th>All levels</th></tr></thead><tbody>";
+    types.concat(["*"]).forEach(function (t) {
+      h += '<tr><th scope="row">' + (t === "*" ? "All types" : NAMES[t]) + "</th>";
+      LV_ORDER.concat(["*"]).forEach(function (lv) {
+        var sub = list.filter(function (a) { return (t === "*" || a.type === t) && (lv === "*" || a.level === lv); });
+        h += cell(sub, agg(sub));
+      });
+      h += "</tr>";
+    });
+    return h + "</tbody></table></div>";
+  }
+  function section(title, sub, body) {
+    return '<section class="sec"><div class="head"><h3>' + title + "</h3>" + (sub ? "<p>" + sub + "</p>" : "") + "</div>" + body + "</section>";
+  }
+  function empty(msg) { return '<p class="emptymsg">' + msg + "</p>"; }
+
+  /* ---------- charts ---------- */
+  function addChart(id, draw) { charts.push({ id: id, draw: draw }); return '<div class="chartbox" id="' + id + '"></div>'; }
+  function legendHTML(items) {
+    return '<div class="legend">' + items.map(function (i) { return '<span class="lg">' + i + "</span>"; }).join("") + "</div>";
+  }
+  function lineKey(color) { return '<i class="lk" style="background:' + color + '"></i>'; }
+  function tableView(head, rows) {
+    return '<details class="tv"><summary>View as table</summary><div class="tblwrap"><table class="tbl"><thead><tr>' +
+      head.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div></details>";
+  }
+
+  function chartLine(host, spec) {
+    var W = Math.max(260, host.clientWidth || 320), H = 190, m = { l: 44, r: 14, t: 12, b: 28 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    function X(x) { return m.l + (spec.xMax === spec.xMin ? iw / 2 : (x - spec.xMin) / (spec.xMax - spec.xMin) * iw); }
+    function Y(y) { return m.t + ih - (y - spec.yMin) / (spec.yMax - spec.yMin) * ih; }
+    var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(spec.aria) + '">';
+    spec.yTicks.forEach(function (v) {
+      s += '<line class="' + (v === spec.yMin ? "base" : "grid") + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"/><text class="ax" x="' + (m.l - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + spec.yFmt(v) + "</text>";
+    });
+    var xt = [];
+    spec.xTicks.forEach(function (t, i) {
+      var last = i === spec.xTicks.length - 1;
+      if (!xt.length) { xt.push(t); return; }
+      if (X(t.x) - X(xt[xt.length - 1].x) < 70) { if (last) { xt.pop(); xt.push(t); } return; }
+      xt.push(t);
+    });
+    xt.forEach(function (t, i) {
+      var anchor = i === 0 ? "start" : i === xt.length - 1 ? "end" : "middle";
+      s += '<text class="ax" x="' + X(t.x) + '" y="' + (H - 8) + '" text-anchor="' + anchor + '">' + esc(t.label) + "</text>";
+    });
+    spec.series.forEach(function (se) {
+      if (!se.pts.length) return;
+      var d = se.pts.map(function (p, i) { return (i ? "L" : "M") + X(p.x).toFixed(1) + " " + Y(p.y).toFixed(1); }).join("");
+      if (spec.series.length === 1 && se.pts.length > 1) {
+        s += '<path d="' + d + "L" + X(se.pts[se.pts.length - 1].x).toFixed(1) + " " + Y(spec.yMin) + "L" + X(se.pts[0].x).toFixed(1) + " " + Y(spec.yMin) + 'Z" style="fill:' + se.color + ';fill-opacity:.1;stroke:none"/>';
+      }
+      s += '<path d="' + d + '" style="fill:none;stroke:' + se.color + ';stroke-width:2;stroke-linejoin:round;stroke-linecap:round"/>';
+      se.pts.forEach(function (p, i) {
+        if (se.pts.length <= 12 || i === se.pts.length - 1) s += '<circle cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="4" style="fill:' + se.color + ';stroke:var(--surface);stroke-width:2"/>';
+      });
+    });
+    s += '<line class="xh" y1="' + m.t + '" y2="' + (m.t + ih) + '" style="display:none"/>';
+    s += '<rect class="hit" x="' + m.l + '" y="' + m.t + '" width="' + iw + '" height="' + ih + '"/></svg>';
+    host.innerHTML = s;
+    var svg = host.firstChild, xh = svg.querySelector(".xh"), hit = svg.querySelector(".hit");
+    function move(e) {
+      var px = e.clientX - svg.getBoundingClientRect().left, best = null, bd = 1e9;
+      spec.xsData.forEach(function (x) { var dd = Math.abs(X(x) - px); if (dd < bd) { bd = dd; best = x; } });
+      if (best == null) return;
+      xh.setAttribute("x1", X(best)); xh.setAttribute("x2", X(best)); xh.style.display = "";
+      var rows = spec.series.map(function (se) {
+        var p = null; se.pts.forEach(function (q) { if (q.x === best) p = q; });
+        return p ? "<div>" + lineKey(se.color) + esc(se.name) + " <b>" + spec.tipFmt(p.y) + "</b></div>" : "";
+      }).join("");
+      showTip('<div class="tt-h">' + esc(spec.labelOf(best)) + "</div>" + rows, e.clientX, e.clientY);
+    }
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", function () { xh.style.display = "none"; hideTip(); });
+  }
+
+  function barPath(x, y, w, h, r) {
+    x = +x; y = +y; w = +w; h = +h; r = Math.min(r, w / 2, h);
+    var f = function (v) { return v.toFixed(1); };
+    return "M" + f(x) + " " + f(y + h) + "V" + f(y + r) + "Q" + f(x) + " " + f(y) + " " + f(x + r) + " " + f(y) + "H" + f(x + w - r) + "Q" + f(x + w) + " " + f(y) + " " + f(x + w) + " " + f(y + r) + "V" + f(y + h) + "Z";
+  }
+  function chartBars(host, spec) {
+    var m = { l: 44, r: 10, t: 12, b: 28 }, nS = spec.nS, gmin = nS * 14 + 14;
+    var avail = Math.max(260, (host.parentNode && host.parentNode.clientWidth) || 320);
+    var W = Math.max(avail, spec.groups.length * gmin + m.l + m.r), H = 190;
+    var iw = W - m.l - m.r, ih = H - m.t - m.b, band = iw / spec.groups.length;
+    function Y(v) { return m.t + ih - v / spec.yMax * ih; }
+    host.style.width = W + "px";
+    var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(spec.aria) + '">';
+    s += '<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" style="fill:var(--bad-bg)"/><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--bad);stroke-width:2.5"/></pattern></defs>';
+    spec.yTicks.forEach(function (v) {
+      s += '<line class="' + (v === 0 ? "base" : "grid") + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"/><text class="ax" x="' + (m.l - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + spec.yFmt(v) + "</text>";
+    });
+    var maxLen = 0; spec.groups.forEach(function (g) { maxLen = Math.max(maxLen, g.label.length); });
+    var every = Math.max(1, Math.ceil((maxLen * 7 + 8) / band));
+    spec.groups.forEach(function (g, i) {
+      var bw = Math.min(24, (band - 10 - (nS - 1) * 2) / nS), total = nS * bw + (nS - 1) * 2, x0 = m.l + i * band + (band - total) / 2;
+      g.bars.forEach(function (b, j) {
+        if (b.v == null || b.v <= 0) return;
+        var h = b.v / spec.yMax * ih;
+        s += '<path d="' + barPath((x0 + j * (bw + 2)).toFixed(1), (Y(b.v)).toFixed(1), bw.toFixed(1), h.toFixed(1), 4) + '" style="fill:' + b.fill + '"/>';
+      });
+      if (i % every === 0) s += '<text class="ax" x="' + (m.l + i * band + band / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + esc(g.label) + "</text>";
+      s += '<rect class="gh" data-i="' + i + '" x="' + (m.l + i * band) + '" y="' + m.t + '" width="' + band + '" height="' + ih + '"/>';
+    });
+    s += "</svg>";
+    host.innerHTML = s;
+    host.querySelectorAll(".gh").forEach(function (r) {
+      function go(e) { showTip(spec.groups[+r.getAttribute("data-i")].tip, e.clientX, e.clientY); }
+      r.addEventListener("pointermove", go); r.addEventListener("pointerdown", go);
+      r.addEventListener("pointerleave", hideTip);
+    });
+  }
+
+  /* ---------- bucketing for progress charts ---------- */
+  function makeBuckets(list) {
+    var dn = {}; list.forEach(function (a) { dn[dayNum(a.time)] = 1; });
+    var days = Object.keys(dn).map(Number).sort(function (a, b) { return a - b; });
+    if (days.length >= 2) return { mode: "day", xs: days, keyOf: function (a) { return dayNum(a.time); }, labelOf: dayLabel, min: days[0], max: days[days.length - 1] };
+    var seen = {}, count = 0;
+    list.forEach(function (a) { if (!seen[a.session]) seen[a.session] = ++count; });
+    var xs = []; for (var i = 1; i <= count; i++) xs.push(i);
+    return { mode: "session", xs: xs, keyOf: function (a) { return seen[a.session]; }, labelOf: function (i) { return "Session " + i; }, min: 1, max: count };
+  }
+  function xTicksFor(B) {
+    var t = [], n = Math.min(5, B.max - B.min + 1);
+    if (B.max === B.min) return [{ x: B.min, label: B.labelOf(B.min) }];
+    for (var i = 0; i < n; i++) { var x = Math.round(B.min + (B.max - B.min) * i / (n - 1)); if (!t.length || t[t.length - 1].x !== x) t.push({ x: x, label: B.labelOf(x) }); }
+    return t;
+  }
+
+  /* =====================================================================
+     Stats screens
+     ===================================================================== */
+  function showStats(tab) {
+    clearTimer(); view.onclick = null; S = null; stats(); setWide(true); hideTip();
+    if (tab) ST.tab = tab;
+    var pl = DB.players.map(function (p) { return '<option value="' + esc(p.id) + '"' + (p.id === DB.current ? " selected" : "") + ">" + esc(p.name) + "</option>"; }).join("");
+    var tabs = [["overview", "Overview"], ["performance", "Performance"], ["timing", "Timing"], ["progress", "Progress"], ["data", "Data and players"]];
+    function opts(vals, cur) { return vals.map(function (v) { return '<option value="' + v[0] + '"' + (v[0] === cur ? " selected" : "") + ">" + v[1] + "</option>"; }).join(""); }
+    view.innerHTML =
+      '<div class="head statshead"><div><span class="eyebrow">Statistics</span><h2>' + esc(curPlayer().name) + '</h2></div><button class="btn ghost" id="sback">Back</button></div>' +
+      (saveOk ? "" : '<p class="warn">This browser is not letting the game save anything, so statistics will be lost when you close the page. Use Export on the Data tab to keep a copy.</p>') +
+      '<div class="filters" id="filterrow">' +
+      '<label>Player<select id="f-player">' + pl + "</select></label>" +
+      '<label>Mode<select id="f-mode">' + opts([["all", "All play"], ["game", "Full game"], ["practice", "Practice"]], ST.mode) + "</select></label>" +
+      '<label>Type<select id="f-type">' + opts([["all", "All types"]].concat(TYPES.map(function (t) { return [t, NAMES[t]]; })), ST.type) + "</select></label>" +
+      '<label>Level<select id="f-level">' + opts([["all", "All levels"]].concat(LV_ORDER.map(function (k) { return [k, LEVELS[k].name]; })), ST.level) + "</select></label></div>" +
+      '<div class="tabs" role="tablist">' + tabs.map(function (t) { return '<button class="tab" role="tab" data-tab="' + t[0] + '" aria-selected="' + (t[0] === ST.tab) + '">' + t[1] + "</button>"; }).join("") + "</div>" +
+      '<div id="tabbody"></div>';
+    document.getElementById("sback").onclick = showStart;
+    ["mode", "type", "level"].forEach(function (k) {
+      document.getElementById("f-" + k).onchange = function () { ST[k] = this.value; renderTab(); };
+    });
+    document.getElementById("f-player").onchange = function () { DB.current = this.value; saveDB(); showStats(); };
+    view.onclick = function (e) {
+      var t = e.target.closest("button[data-tab]");
+      if (t) { ST.tab = t.getAttribute("data-tab"); renderTab(); }
+    };
+    renderTab();
+  }
+
+  function renderTab() {
+    hideTip(); charts = [];
+    var body = document.getElementById("tabbody"); if (!body) return;
+    document.getElementById("filterrow").hidden = ST.tab === "data";
+    view.querySelectorAll(".tab").forEach(function (b) { b.setAttribute("aria-selected", b.getAttribute("data-tab") === ST.tab ? "true" : "false"); });
+    var fn = { overview: tabOverview, performance: tabPerformance, timing: tabTiming, progress: tabProgress, data: tabData }[ST.tab];
+    body.innerHTML = fn();
+    drawCharts();
+    if (ST.tab === "data") bindData();
+  }
+  function drawCharts() {
+    charts.forEach(function (c) { var h = document.getElementById(c.id); if (h) c.draw(h); });
+  }
+  var resizeT = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function () { if (document.getElementById("tabbody") && charts.length) drawCharts(); }, 150);
+  });
+
+  function noData() {
+    return mine().length === 0
+      ? empty("No statistics yet. Play a stage and they will start to appear here.")
+      : empty("No attempts match these filters. Try setting Mode, Type or Level back to All.");
+  }
+
+  /* ---------- Overview ---------- */
+  function tabOverview() {
+    var list = filtered(); if (!list.length) return noData();
+    var A = agg(list);
+    var dn = {}; list.forEach(function (a) { dn[dayNum(a.time)] = 1; });
+    var today = dayNum(Date.now()), streak = 0, d = dn[today] ? today : today - 1;
+    while (dn[d]) { streak++; d--; }
+    var played = Object.keys(dn).length;
+    var kpis = [
+      ["Stages played", A.n, A.cleared + " cleared"],
+      ["Cleared", pct(A.clearPct), "of stages played"],
+      ["Items remembered", pct(A.recallPct), "across all stages"],
+      ["Answer speed", secs(A.spi), "per item"],
+      ["Days played", played, streak ? streak + "-day streak" : "no streak right now"]
+    ].map(function (k) { return '<div class="kpi"><span>' + k[0] + "</span><b>" + k[1] + "</b><small>" + k[2] + "</small></div>"; }).join("");
+
+    var notes = [];
+    var byType = groupBy(filtered(["type"]), function (a) { return a.type; }), tstat = [];
+    byType.keys.forEach(function (t) { var g = agg(byType.map[t]); if (g.n >= 5) tstat.push({ t: t, r: g.recallPct }); });
+    if (tstat.length >= 2) {
+      tstat.sort(function (a, b) { return b.r - a.r; });
+      notes.push("Strongest type: <b>" + NAMES[tstat[0].t] + "</b> (" + pct(tstat[0].r) + " remembered). Most room to grow: <b>" + NAMES[tstat[tstat.length - 1].t] + "</b> (" + pct(tstat[tstat.length - 1].r) + ").");
+    }
+    if (A.nOk >= 3 && A.nBad >= 3) {
+      notes.push("Cleared stages take <b>" + secs(A.ansOk) + "</b> to answer, missed ones <b>" + secs(A.ansBad) + "</b>." + (A.ansBad < A.ansOk ? " Misses are quicker than successes, which can mean rushing." : " Missed stages take longer, so long hesitation is a sign the memory was not there."));
+    }
+    if (A.use != null) notes.push("You use <b>" + pct(A.use) + "</b> of the viewing time on average and tap “I have it” early on <b>" + pct(A.earlyPct) + "</b> of stages.");
+    if (A.misses >= 3) notes.push("<b>" + pct(A.oneShortPct) + "</b> of missed stages were only one item short.");
+    var gl = list.filter(function (a) { return a.mode === "game"; });
+    var streakBest = 0, cur = 0; list.forEach(function (a) { if (a.cleared) { cur++; if (cur > streakBest) streakBest = cur; } else cur = 0; });
+    if (streakBest >= 2) notes.push("Longest run of cleared stages in a row: <b>" + streakBest + "</b>.");
+
+    var recs = matrixHTML(filtered(["type", "level"]), function (sub) {
+      var b = 0; sub.forEach(function (a) { if (a.cleared && a.stage > b) b = a.stage; });
+      return b ? '<td class="heat" style="--v:' + Math.min(1, b / 20).toFixed(2) + '"><b>' + b + "</b></td>" : '<td class="na">–</td>';
+    });
+    var scores = LV_ORDER.map(function (k) {
+      var b = 0; gl.forEach(function (a) { if (a.level === k && a.score > b) b = a.score; });
+      return '<div class="kpi"><span>Best score, ' + LEVELS[k].name + "</span><b>" + b + "</b></div>";
+    }).join("");
+
+    return '<div class="kpis">' + kpis + "</div>" +
+      section("What stands out", "", notes.length ? '<ul class="notes">' + notes.map(function (n) { return "<li>" + n + "</li>"; }).join("") + "</ul>" : empty("Play a few more stages to see patterns.")) +
+      section("Furthest stage cleared", "Highest stage cleared for each type and level. Practice and full game both count unless you filter by Mode.", recs) +
+      section("Best scores", "Full game only.", '<div class="kpis">' + scores + "</div>");
+  }
+
+  /* ---------- Performance ---------- */
+  function tabPerformance() {
+    var all = filtered(); if (!all.length) return noData();
+    var mx = matrixHTML(filtered(["type", "level"]), function (sub, g) {
+      if (!g.n) return '<td class="na">–</td>';
+      return '<td class="heat" style="--v:' + (g.recallPct / 100).toFixed(2) + '"><b>' + pct(g.recallPct) + "</b><small>" + pct(g.clearPct) + " cleared · " + g.n + "</small></td>";
+    });
+    var byStage = groupBy(all, function (a) { return a.stage; });
+    var stages = byStage.keys.map(Number).sort(function (a, b) { return a - b; });
+    var rows = stages.map(function (st) {
+      var g = agg(byStage.map[st]);
+      return "<tr><th scope=\"row\">" + st + "</th><td>" + g.n + "</td><td>" + pct(g.clearPct) + '</td><td><span class="mbar"><i style="width:' + Math.round(g.recallPct) + '%"></i></span> ' + pct(g.recallPct) + "</td></tr>";
+    }).join("");
+    var stageTbl = '<div class="tblwrap"><table class="tbl"><thead><tr><th>Stage</th><th>Tries</th><th>Cleared</th><th>Items remembered</th></tr></thead><tbody>' + rows + "</tbody></table></div>";
+
+    var hard = "";
+    var nums = groupBy(all.filter(function (a) { return a.type === "numbers" && a.digits; }), function (a) { return a.digits; });
+    if (nums.keys.length) hard += section("Numbers by digits", "Longest number in the stage.", smallTable(nums, function (k) { return k + (k === "1" ? " digit" : " digits"); }));
+    var tl = groupBy(all.filter(function (a) { return a.type === "tiles" && a.grid; }), function (a) { return a.grid; });
+    if (tl.keys.length) hard += section("Tiles by square size", "", smallTable(tl, function (k) { return k + "×" + k; }));
+
+    return section("Type and level", "Share of items remembered. Below it: stages cleared and number of tries. Uses the Mode filter only.", mx) +
+      section("By stage", "Scope: " + scopeText() + ". Later stages are longer, so lower numbers there are expected.", stageTbl) + hard;
+  }
+  function smallTable(grp, labelFn) {
+    var rows = grp.keys.map(Number).sort(function (a, b) { return a - b; }).map(function (k) {
+      var g = agg(grp.map[k]);
+      return "<tr><th scope=\"row\">" + labelFn(String(k)) + "</th><td>" + g.n + "</td><td>" + pct(g.clearPct) + '</td><td><span class="mbar"><i style="width:' + Math.round(g.recallPct) + '%"></i></span> ' + pct(g.recallPct) + "</td></tr>";
+    }).join("");
+    return '<div class="tblwrap"><table class="tbl"><thead><tr><th></th><th>Tries</th><th>Cleared</th><th>Items remembered</th></tr></thead><tbody>' + rows + "</tbody></table></div>";
+  }
+
+  /* ---------- Timing ---------- */
+  function tabTiming() {
+    var all = filtered(); if (!all.length) return noData();
+    var mx = matrixHTML(filtered(["type", "level"]), function (sub, g) {
+      if (g.ansOk == null && g.ansBad == null) return '<td class="na">–</td>';
+      return "<td>" + (g.ansOk != null ? "<div>✓ <b>" + secs(g.ansOk) + "</b> <small>×" + g.nOk + "</small></div>" : "") +
+        (g.ansBad != null ? "<div>✗ <b>" + secs(g.ansBad) + "</b> <small>×" + g.nBad + "</small></div>" : "") +
+        "<small>" + secs(g.spi) + "/item</small></td>";
+    });
+    var byStage = groupBy(all, function (a) { return a.stage; });
+    var stages = byStage.keys.map(Number).sort(function (a, b) { return a - b; });
+    var data = stages.map(function (st) { return { st: st, g: agg(byStage.map[st]) }; });
+    var maxV = 0; data.forEach(function (r) { maxV = Math.max(maxV, r.g.ansOk || 0, r.g.ansBad || 0); });
+    var sc = niceScale(maxV || 1, 4);
+    var groups = data.map(function (r) {
+      return {
+        label: String(r.st),
+        bars: [{ v: r.g.ansOk, fill: "var(--good)" }, { v: r.g.ansBad, fill: "url(#hatch)" }],
+        tip: '<div class="tt-h">Stage ' + r.st + " · " + r.g.n + " tries</div><div>✓ Cleared <b>" + secs(r.g.ansOk) + "</b></div><div>✗ Missed <b>" + secs(r.g.ansBad) + "</b></div>"
+      };
+    });
+    var chart = addChart("ch-time", function (h) {
+      chartBars(h, { nS: 2, groups: groups, yMax: sc.max, yTicks: ticksOf(sc), yFmt: function (v) { return v + "s"; }, aria: "Average answer time by stage, cleared versus missed" });
+    });
+    var leg = legendHTML(['<i class="sw" style="background:var(--good)"></i>✓ Cleared stages', '<i class="sw hatch"></i>✗ Missed stages']);
+    var tbl = tableView(["Stage", "Cleared: time", "Missed: time", "Per item"], data.map(function (r) {
+      return [r.st, secs(r.g.ansOk) + (r.g.nOk ? " (×" + r.g.nOk + ")" : ""), secs(r.g.ansBad) + (r.g.nBad ? " (×" + r.g.nBad + ")" : ""), secs(r.g.spi)];
+    }));
+    return '<p class="note">Answer time runs from the moment the question appears until you tap Check. Answers over 3 minutes are ignored, in case someone walked away. ✓ marks cleared stages, ✗ missed ones, ×n the number of tries.</p>' +
+      section("Type and level", "Uses the Mode filter only.", mx) +
+      section("Answer time by stage", "Scope: " + scopeText() + ".", leg + '<div class="scroll">' + chart + "</div>" + tbl);
+  }
+
+  /* ---------- Progress ---------- */
+  function tabProgress() {
+    var list = filtered(); if (!list.length) return noData();
+    var B = makeBuckets(list);
+    if (B.xs.length < 2) return empty("Progress over time appears after your second session or second day of play. Come back after another game.") + comparisonNote(list);
+    var types = TYPES.filter(function (t) { return list.some(function (a) { return a.type === t; }); });
+    function seriesFor(metric) {
+      return types.map(function (t) {
+        var g = groupBy(list.filter(function (a) { return a.type === t; }), B.keyOf), pts = [];
+        B.xs.forEach(function (x) {
+          var sub = g.map[x]; if (!sub) return;
+          var y = null;
+          if (metric === "stage") { sub.forEach(function (a) { if (a.cleared && (y == null || a.stage > y)) y = a.stage; }); }
+          else if (metric === "recall") y = agg(sub).recallPct;
+          else { var v = agg(sub).spi; y = v; }
+          if (y != null) pts.push({ x: x, y: y });
+        });
+        return { name: NAMES[t], color: TCOL[t], pts: pts };
+      }).filter(function (s) { return s.pts.length; });
+    }
+    var ticks = xTicksFor(B);
+    function lineSection(id, title, sub, metric, fmt, pctMode) {
+      var ser = seriesFor(metric);
+      if (!ser.length) return "";
+      var mxv = 0; ser.forEach(function (s) { s.pts.forEach(function (p) { mxv = Math.max(mxv, p.y); }); });
+      var yMax, yTicks;
+      if (pctMode) { yMax = 100; yTicks = [0, 25, 50, 75, 100]; } else { var sc = niceScale(mxv || 1, 4); yMax = sc.max; yTicks = ticksOf(sc); }
+      var xsData = {}; ser.forEach(function (s) { s.pts.forEach(function (p) { xsData[p.x] = 1; }); });
+      var box = addChart(id, function (h) {
+        chartLine(h, { series: ser, xsData: Object.keys(xsData).map(Number), xMin: B.min, xMax: B.max, xTicks: ticks, yMin: 0, yMax: yMax, yTicks: yTicks, yFmt: fmt, tipFmt: fmt, labelOf: B.labelOf, aria: title });
+      });
+      var leg = ser.length > 1 ? legendHTML(ser.map(function (s) { return lineKey(s.color) + s.name; })) : "";
+      var head = ["When"].concat(ser.map(function (s) { return s.name; }));
+      var rows = B.xs.map(function (x) {
+        return [esc(B.labelOf(x))].concat(ser.map(function (s) { var v = null; s.pts.forEach(function (p) { if (p.x === x) v = p.y; }); return v == null ? "–" : fmt(v); }));
+      });
+      return section(title, sub, leg + box + tableView(head, rows));
+    }
+    var act = groupBy(list, B.keyOf);
+    var am = 0; B.xs.forEach(function (x) { am = Math.max(am, (act.map[x] || []).length); });
+    var asc = niceScale(am || 1, 4);
+    var actBox = addChart("ch-act", function (h) {
+      chartBars(h, {
+        nS: 1, yMax: asc.max, yTicks: ticksOf(asc), yFmt: function (v) { return String(v); }, aria: "Stages played per " + (B.mode === "day" ? "day" : "session"),
+        groups: B.xs.map(function (x) { var n = (act.map[x] || []).length; return { label: B.mode === "day" ? dayLabel(x) : String(x), bars: [{ v: n, fill: "var(--accent)" }], tip: '<div class="tt-h">' + esc(B.labelOf(x)) + "</div><div>Stages played <b>" + n + "</b></div>" }; })
+      });
+    });
+    var per = B.mode === "day" ? "day" : "session";
+    return '<p class="note">Points are grouped by ' + per + '. The game gets harder as you clear stages, so a steady recall line while the stage line rises is real progress.</p>' + comparisonNote(list) +
+      lineSection("ch-stage", "Furthest stage cleared", "Best stage cleared in each " + per + ". Filter by level to compare like with like.", "stage", function (v) { return String(Math.round(v * 10) / 10); }, false) +
+      lineSection("ch-recall", "Items remembered", "Share of items correct in each " + per + ".", "recall", function (v) { return Math.round(v) + "%"; }, true) +
+      lineSection("ch-spi", "Answer speed", "Average seconds per item in each " + per + ". Lower is faster.", "spi", function (v) { return v.toFixed(1) + "s"; }, false) +
+      section("Activity", "Stages played per " + per + ".", '<div class="scroll">' + actBox + "</div>");
+  }
+  function comparisonNote(list) {
+    var n = list.length; if (n < 10) return "";
+    var k = Math.min(20, Math.floor(n / 2)), a = agg(list.slice(0, k)), b = agg(list.slice(n - k));
+    return '<p class="cmp">First ' + k + " stages: <b>" + pct(a.recallPct) + "</b> remembered, <b>" + secs(a.spi) + "</b> per item. Latest " + k + " stages: <b>" + pct(b.recallPct) + "</b> remembered, <b>" + secs(b.spi) + "</b> per item.</p>";
+  }
+
+  /* ---------- Data and players ---------- */
+  function tabData() {
+    var rows = DB.players.map(function (p) {
+      var n = DB.attempts.filter(function (a) { return a.player === p.id; }).length;
+      return '<div class="prow"><input class="txt pname" id="pn-' + esc(p.id) + '" data-pid="' + esc(p.id) + '" value="' + esc(p.name) + '" maxlength="24" aria-label="Player name"><span class="pn">' + n + ' stages</span><div class="acts">' +
+        '<button class="btn small ghost" data-act="rename" data-pid="' + esc(p.id) + '">Save name</button>' +
+        '<button class="btn small ghost" data-act="clear" data-pid="' + esc(p.id) + '">Clear stats</button>' +
+        (DB.players.length > 1 ? '<button class="btn small ghost" data-act="del" data-pid="' + esc(p.id) + '">Delete player</button>' : "") + "</div></div>";
+    }).join("");
+    return section("Players", "Each player has their own statistics, best scores and game options. Kids and adults can share one device.",
+      '<div class="plist">' + rows + "</div>" +
+      '<div class="row"><input class="txt" id="newname" maxlength="24" placeholder="New player name" aria-label="New player name"><button class="btn small" id="addp">Add player</button></div>') +
+      section("Export", "Save your statistics as a file, to keep a backup or move them to another device or browser.",
+        '<div class="row"><label class="inl">Include <select id="exscope"><option value="all">All players</option><option value="cur">Current player only</option></select></label></div>' +
+        '<div class="row"><button class="btn small" id="exjson">Download file</button><button class="btn small ghost" id="excsv">Download CSV</button><button class="btn small ghost" id="excopy">Copy text</button></div>' +
+        '<textarea class="txt" id="extext" rows="5" readonly hidden aria-label="Exported statistics text"></textarea><p class="note" id="exmsg" role="status">The file is JSON, which you can import again. CSV opens in a spreadsheet. If nothing downloads (some in-app viewers block it), use Copy text and paste it into a note or file.</p>') +
+      section("Import", "Add statistics from an export. Nothing is overwritten, stages already present are skipped.",
+        '<input type="file" id="imfile" accept=".json,application/json" aria-label="Choose an export file">' +
+        '<textarea class="txt" id="imtext" rows="4" placeholder="Or paste exported text here" aria-label="Paste exported text"></textarea>' +
+        '<label class="inl"><input type="checkbox" id="immerge" checked> Treat players with the same name as the same person</label>' +
+        '<div class="row"><button class="btn small" id="imgo">Import</button></div><p class="note" id="immsg" role="status"></p>') +
+      '<p class="note">Statistics are stored in this browser on this device. Different browsers, or the same page opened from a different web address, keep separate copies, so use Export and Import to move them.</p>';
+  }
+  function csvCell(v) {
+    v = String(v == null ? "" : v);
+    if (/^[=+\-@]/.test(v)) v = "'" + v;
+    return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }
+  function exportPayload(scope) {
+    var pl = scope === "cur" ? DB.players.filter(function (p) { return p.id === DB.current; }) : DB.players.slice();
+    var ids = pl.map(function (p) { return p.id; });
+    return { app: "recall-ladder", version: 1, exported: new Date().toISOString(), players: pl, attempts: DB.attempts.filter(function (a) { return ids.indexOf(a.player) >= 0; }) };
+  }
+  function exportCSV(scope) {
+    var o = exportPayload(scope), names = {}; o.players.forEach(function (p) { names[p.id] = p.name; });
+    var head = ["player", "time", "session", "mode", "type", "level", "stage", "items", "right", "cleared", "answer_seconds", "view_seconds", "allowed_seconds", "score", "single_digit_setting", "max_digits", "grid_size"];
+    var lines = [head.join(",")];
+    o.attempts.forEach(function (a) {
+      lines.push([names[a.player], new Date(a.time).toISOString(), a.session, a.mode, a.type, a.level, a.stage, a.items, a.right, a.cleared, (a.answerMs / 1000).toFixed(2), (a.viewMs / 1000).toFixed(2), a.allowedSec, a.score, a.single, a.digits, a.grid].map(csvCell).join(","));
+    });
+    return lines.join("\n");
+  }
+  function downloadFile(name, text, type) {
+    try {
+      var u = URL.createObjectURL(new Blob([text], { type: type })), a = document.createElement("a");
+      a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(u); }, 3000); return true;
+    } catch (e) { return false; }
+  }
+  function isoDay() { return new Date().toISOString().slice(0, 10); }
+  function num(x, lo, hi) { x = Number(x); return isFinite(x) && x >= lo && x <= hi ? Math.round(x) : null; }
+  function safeId(x) { x = String(x == null ? "" : x); return /^[A-Za-z0-9_-]{1,40}$/.test(x) ? x : null; }
+  function cleanAttempt(r, map) {
+    if (!r || typeof r !== "object") return null;
+    var id = safeId(r.id), pl = map[String(r.player)];
+    if (!id || !pl || TYPES.indexOf(r.type) < 0 || !LEVELS[r.level] || (r.mode !== "game" && r.mode !== "practice")) return null;
+    var stage = num(r.stage, 1, 500), items = num(r.items, 1, 100), right = num(r.right, 0, 100), time = num(r.time, 1, 4e12);
+    if (stage == null || items == null || right == null || right > items || time == null) return null;
+    var a = {
+      id: id, player: pl, time: time, session: safeId(r.session) || "imported", mode: r.mode, type: r.type, level: r.level, stage: stage,
+      items: items, right: right, cleared: right === items ? 1 : 0,
+      answerMs: num(r.answerMs, 0, 36e5) || 0, viewMs: num(r.viewMs, 0, 36e5) || 0, allowedSec: num(r.allowedSec, 0, 600) || 0,
+      score: num(r.score, 0, 1e7) || 0, single: r.single ? 1 : 0
+    };
+    var dg = num(r.digits, 1, 6), gd = num(r.grid, 2, 12);
+    if (dg && r.type === "numbers") a.digits = dg;
+    if (gd && r.type === "tiles") a.grid = gd;
+    return a;
+  }
+  function importText(text, byName) {
+    var o; try { o = JSON.parse(text); } catch (e) { return { err: "That text is not valid JSON. Paste the whole export, from the first { to the last }." }; }
+    if (!o || o.app !== "recall-ladder" || !Array.isArray(o.players) || !Array.isArray(o.attempts)) return { err: "This does not look like a Recall Ladder export." };
+    if (o.attempts.length > 200000) return { err: "That file has too many entries." };
+    var map = {}, addedP = 0;
+    o.players.forEach(function (p) {
+      if (!p || typeof p.name !== "string") return;
+      var key = String(p.id), name = p.name.trim().slice(0, 24) || "Player", ex = null, id = safeId(p.id);
+      DB.players.forEach(function (x) { if (id && x.id === id) ex = x; });
+      if (!ex && byName) DB.players.forEach(function (x) { if (!ex && x.name.toLowerCase() === name.toLowerCase()) ex = x; });
+      if (ex) { map[key] = ex.id; return; }
+      if (!id || DB.players.some(function (x) { return x.id === id; })) id = uid();
+      DB.players.push({ id: id, name: name, created: num(p.created, 1, 4e12) || Date.now(), events: p.events !== false, single: !!p.single });
+      map[key] = id; addedP++;
+    });
+    var have = {}; DB.attempts.forEach(function (a) { have[a.id] = 1; });
+    var added = 0, dup = 0, bad = 0;
+    o.attempts.forEach(function (r) {
+      var a = cleanAttempt(r, map);
+      if (!a) { bad++; return; }
+      if (have[a.id]) { dup++; return; }
+      have[a.id] = 1; DB.attempts.push(a); added++;
+    });
+    DB.attempts.sort(function (x, y) { return x.time - y.time; });
+    saveDB();
+    return { added: added, dup: dup, bad: bad, players: addedP };
+  }
+  function arm(btn, label, fn) {
+    if (armed && armed.btn === btn) { clearTimeout(armed.t); armed = null; fn(); return; }
+    if (armed) { clearTimeout(armed.t); armed.btn.textContent = armed.label; }
+    armed = { btn: btn, label: btn.textContent, t: setTimeout(function () { btn.textContent = armed ? armed.label : btn.textContent; armed = null; }, 4000) };
+    btn.textContent = label;
+  }
+  function bindData() {
+    var body = document.getElementById("tabbody");
+    body.onclick = function (e) {
+      var b = e.target.closest("button[data-act]"); if (!b) return;
+      var pid = b.getAttribute("data-pid"), act = b.getAttribute("data-act");
+      if (act === "rename") {
+        var v = document.getElementById("pn-" + pid).value.trim().slice(0, 24);
+        if (!v) return;
+        DB.players.forEach(function (p) { if (p.id === pid) p.name = v; }); saveDB(); showStats("data");
+      } else if (act === "clear") {
+        arm(b, "Tap again to clear", function () { DB.attempts = DB.attempts.filter(function (a) { return a.player !== pid; }); saveDB(); showStats("data"); });
+      } else if (act === "del") {
+        arm(b, "Tap again to delete", function () {
+          DB.players = DB.players.filter(function (p) { return p.id !== pid; });
+          DB.attempts = DB.attempts.filter(function (a) { return a.player !== pid; });
+          if (DB.current === pid) DB.current = DB.players[0].id;
+          saveDB(); showStats("data");
+        });
+      }
+    };
+    document.getElementById("addp").onclick = function () {
+      var inp = document.getElementById("newname"), v = inp.value.trim().slice(0, 24); if (!v) { inp.focus(); return; }
+      var p = { id: uid(), name: v, created: Date.now(), events: true, single: false };
+      DB.players.push(p); saveDB(); showStats("data");
+    };
+    var scope = function () { return document.getElementById("exscope").value; };
+    var ta = document.getElementById("extext"), msg = document.getElementById("exmsg");
+    function fill(text) { ta.hidden = false; ta.value = text; }
+    document.getElementById("exjson").onclick = function () {
+      var t = JSON.stringify(exportPayload(scope()), null, 1); downloadFile("recall-ladder-stats-" + isoDay() + ".json", t, "application/json");
+      fill(t); msg.textContent = "If your browser did not download the file, copy the text below instead.";
+    };
+    document.getElementById("excsv").onclick = function () {
+      var t = exportCSV(scope()); downloadFile("recall-ladder-stats-" + isoDay() + ".csv", t, "text/csv");
+      fill(t); msg.textContent = "If your browser did not download the file, copy the text below instead.";
+    };
+    document.getElementById("excopy").onclick = function () {
+      var t = JSON.stringify(exportPayload(scope()), null, 1); fill(t); ta.select();
+      var done = function () { msg.textContent = "Copied. Paste it into a note or file, and use Import on the other device."; };
+      var fail = function () { msg.textContent = "Copying was blocked, so the text is selected below. Copy it manually."; };
+      try { navigator.clipboard.writeText(t).then(done, fail); } catch (e) { fail(); }
+    };
+    var im = document.getElementById("imtext"), imsg = document.getElementById("immsg");
+    document.getElementById("imfile").onchange = function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      if (f.size > 30e6) { imsg.textContent = "That file is too large."; return; }
+      var r = new FileReader();
+      r.onload = function () { im.value = String(r.result); imsg.textContent = "File loaded. Tap Import to add it."; };
+      r.onerror = function () { imsg.textContent = "Could not read that file."; };
+      r.readAsText(f);
+    };
+    document.getElementById("imgo").onclick = function () {
+      var t = im.value.trim(); if (!t) { imsg.textContent = "Choose a file or paste the exported text first."; return; }
+      var res = importText(t, document.getElementById("immerge").checked);
+      if (res.err) { imsg.textContent = res.err; return; }
+      showStats("data");
+      document.getElementById("immsg").textContent = "Imported " + res.added + " stages" + (res.players ? " and " + res.players + " new player" + (res.players > 1 ? "s" : "") : "") + ". Skipped " + res.dup + " already here" + (res.bad ? " and " + res.bad + " that could not be read" : "") + ".";
+    };
+  }
+
+  /* ---------- player bar (start screen) ---------- */
+  function playerBarHTML() {
+    var chips = DB.players.map(function (p) {
+      return '<button class="chip" data-player="' + esc(p.id) + '" aria-pressed="' + (p.id === DB.current) + '">' + esc(p.name) + "</button>";
+    }).join("");
+    var add = addingPlayer
+      ? '<input class="txt" id="newp" maxlength="24" placeholder="Name" aria-label="New player name"><button class="btn small" id="newpgo">Add</button><button class="btn small ghost" id="newpx">Cancel</button>'
+      : '<button class="chip add" id="addplayer">+ Add player</button>';
+    return '<div class="playerbar"><div class="label">Who is playing?</div><div class="chips">' + chips + add + '</div><button class="btn small ghost" id="mystats">My statistics</button></div>';
+  }
+  function bindPlayerBar() {
+    var np = document.getElementById("newp");
+    function commit() {
+      var v = np.value.trim().slice(0, 24); if (!v) { np.focus(); return; }
+      var p = { id: uid(), name: v, created: Date.now(), events: true, single: false };
+      DB.players.push(p); DB.current = p.id; saveDB(); addingPlayer = false; showStart();
+    }
+    if (np) {
+      np.focus();
+      np.onkeydown = function (e) { if (e.key === "Enter") commit(); if (e.key === "Escape") { addingPlayer = false; showStart(); } };
+      document.getElementById("newpgo").onclick = commit;
+      document.getElementById("newpx").onclick = function () { addingPlayer = false; showStart(); };
+    }
+  }
+
+  loadDB();
 
   showStart();
 })();
