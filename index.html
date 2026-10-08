@@ -308,9 +308,9 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
 
 <script>
 (function () {
-  /* Online accounts. Fill in from Firebase console > Project settings > General > Your apps (web app).
-     Leave empty to run the game without accounts, exactly as before. */
-  var FIREBASE = { apiKey: "", projectId: "", emulator: "" };
+  /* Online accounts (Firebase project "recall-ladder"; see SETUP-FIREBASE.md).
+     These values are public by design. Empty apiKey runs the game without accounts. */
+  var FIREBASE = { apiKey: "AIzaSyC7jmwqnvi90Go_x4QZ4mE0AQYLiXD61Bg", projectId: "recall-ladder", emulator: "" };
 
   var OBJECTS = ["🔑","🎈","🚲","🍎","🎸","⌚","🕯️","🌵","🧲","🪁","🔔","🍄","🧦","🪑","📷","🧭","🎩","🍋","🐢","🦉","🚪","🥕","🧩","🔭","🪴","🥁","🍩","🧢","🛎️","🪣","🎲","🧸","🖍️","🔦","🍐","🐙","🦆","🍒","🚁","⛺","📎","🧯","🪜","🎻","🥨","🐝","🧀","🛼","🪙","🍞","🦀","🌂","🧣","🥄","🔨","🏺","🪕","🧃","🐧","🍉"];
   var EVENTS = ["The lights go out","A dog starts barking","The phone rings twice","A window slams shut","Someone knocks at the door","The kettle whistles","A car alarm goes off","It starts to rain","The elevator stops","A glass falls and breaks","The clock strikes noon","A bird lands on the sill","The power comes back","A letter slides under the door","Thunder rolls in the distance","The train pulls away","A child laughs upstairs","The fridge hums to a stop","A cat knocks over a plant","The doorbell rings","Music starts next door","A balloon pops","The wind blows the curtain","Someone whistles a tune","The oven timer beeps","A bicycle bell rings","The garage door opens","A siren passes by","The radio switches on","A coin rolls under the table","The floorboard creaks","Snow begins to fall","A helicopter flies over","The printer jams","A key turns in the lock","The alarm clock rings","A plate spins on the floor","Fireworks light the sky","The ice cream truck arrives","A door swings open"];
@@ -1706,7 +1706,9 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       WEAK_PASSWORD: "Use a password with at least 6 characters.",
       USER_DISABLED: "This account has been turned off.",
       TOO_MANY_ATTEMPTS_TRY_LATER: "Too many tries. Wait a few minutes and try again.",
-      OPERATION_NOT_ALLOWED: "Email sign-in is not turned on in Firebase yet."
+      OPERATION_NOT_ALLOWED: "Email sign-in is not turned on in Firebase yet.",
+      PASSWORD_LOGIN_DISABLED: "Email sign-in is not turned on in Firebase yet.",
+      CONFIGURATION_NOT_FOUND: "Sign-in is not set up in Firebase yet."
     };
     for (var k in m) if (String(code).indexOf(k) === 0) return m[k];
     return "Something went wrong (" + esc(code) + ").";
