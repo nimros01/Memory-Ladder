@@ -1,0 +1,50 @@
+rules_version = '2';
+
+// Recall Ladder: each account can only read and write its own data,
+// and only after the email address has been confirmed.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email_verified == true;
+    }
+
+    // users/{uid}: the account's players (names, options, clears, deletions)
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['players', 'updated'])
+        && request.resource.data.players is list
+        && request.resource.data.players.size() <= 300
+        && request.resource.data.updated is int;
+
+      // one document per stage played; never changed once uploaded
+      match /attempts/{aid} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && validAttempt(aid);
+        // a repeated upload of the same stage may only refresh its upload time
+        allow update: if isOwner(uid) && validAttempt(aid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['up']);
+        allow delete: if false;
+      }
+    }
+
+    function validAttempt(aid) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['id', 'player', 'time', 'session', 'mode', 'type', 'level', 'stage',
+                               'items', 'right', 'cleared', 'answerMs', 'viewMs', 'allowedSec',
+                               'score', 'single', 'digits', 'grid', 'up'])
+        && d.keys().hasAll(['id', 'player', 'time', 'mode', 'type', 'level', 'stage', 'items', 'right', 'up'])
+        && d.id == aid
+        && d.player is string && d.player.size() <= 40
+        && d.time is int && d.up is int
+        && d.mode in ['game', 'practice']
+        && d.type in ['objects', 'numbers', 'tiles', 'events']
+        && d.level in ['easy', 'medium', 'hard']
+        && d.stage is int && d.items is int && d.right is int
+        && d.right >= 0 && d.right <= d.items;
+    }
+  }
+}
