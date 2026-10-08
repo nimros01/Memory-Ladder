@@ -289,6 +289,10 @@ h3 { font-family: var(--font-display); font-weight: 500; font-size: 16px; margin
 .tt-h { opacity: 0.75; font-size: 12px; margin-bottom: 2px; }
 @media (prefers-reduced-motion: reduce) { .bar i, .tile { transition: none !important; } }
 body { margin: 0; padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+.acctbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+.acctbar .note { flex: 1 1 220px; }
+.fld { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--ink-soft); max-width: 360px; }
+.fld .txt { width: 100%; }
 button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 </style>
 
@@ -304,6 +308,10 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
 
 <script>
 (function () {
+  /* Online accounts (Firebase project "recall-ladder"; see SETUP-FIREBASE.md).
+     These values are public by design. Empty apiKey runs the game without accounts. */
+  var FIREBASE = { apiKey: "AIzaSyC7jmwqnvi90Go_x4QZ4mE0AQYLiXD61Bg", projectId: "recall-ladder", emulator: "" };
+
   var OBJECTS = ["🔑","🎈","🚲","🍎","🎸","⌚","🕯️","🌵","🧲","🪁","🔔","🍄","🧦","🪑","📷","🧭","🎩","🍋","🐢","🦉","🚪","🥕","🧩","🔭","🪴","🥁","🍩","🧢","🛎️","🪣","🎲","🧸","🖍️","🔦","🍐","🐙","🦆","🍒","🚁","⛺","📎","🧯","🪜","🎻","🥨","🐝","🧀","🛼","🪙","🍞","🦀","🌂","🧣","🥄","🔨","🏺","🪕","🧃","🐧","🍉"];
   var EVENTS = ["The lights go out","A dog starts barking","The phone rings twice","A window slams shut","Someone knocks at the door","The kettle whistles","A car alarm goes off","It starts to rain","The elevator stops","A glass falls and breaks","The clock strikes noon","A bird lands on the sill","The power comes back","A letter slides under the door","Thunder rolls in the distance","The train pulls away","A child laughs upstairs","The fridge hums to a stop","A cat knocks over a plant","The doorbell rings","Music starts next door","A balloon pops","The wind blows the curtain","Someone whistles a tune","The oven timer beeps","A bicycle bell rings","The garage door opens","A siren passes by","The radio switches on","A coin rolls under the table","The floorboard creaks","Snow begins to fall","A helicopter flies over","The printer jams","A key turns in the lock","The alarm clock rings","A plate spins on the floor","Fireworks light the sky","The ice cream truck arrives","A door swings open"];
   var SHORT_EVENTS = ["Lights out","Dog barks","Phone rings","Door slams","Rain starts","Glass breaks","Bell rings","Cat jumps","Kettle whistles","Wind blows","Baby laughs","Alarm beeps","Car honks","Snow falls","Thunder booms","Clock chimes","Bird sings","Knock knock","Train leaves","Music starts","Balloon pops","Key turns","Window opens","Coin drops","Siren wails","Oven beeps","Fridge hums","Plate falls","Fire crackles","Bike passes"];
@@ -380,6 +388,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       return '<button class="level" data-lv="' + k + '"><b>' + l.name + '</b><span>' + l.blurb + '</span><small>Best ' + getBest(k) + "</small></button>";
     }).join("");
     view.innerHTML =
+      acctBarHTML() +
       playerBarHTML() +
       '<div class="head"><span class="eyebrow">Memory game</span><h1>How far up can you go?</h1>' +
       "<p>Each stage shows you a short list for a few seconds, then asks for it back. Clear a stage and the next one gets longer and quicker. Miss one and you lose a life, but every correct answer still earns points. You have three lives.</p></div>" +
@@ -397,6 +406,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
         return '<button class="level" data-pt="' + t + '"><b>' + NAMES[t] + '</b></button>';
       }).join("") + "</div>";
     bindPlayerBar();
+    var ab = document.getElementById("acctbtn"); if (ab) ab.onclick = function () { view.onclick = null; showAccount(); };
     document.getElementById("mystats").onclick = function () { view.onclick = null; showStats(); };
     document.getElementById("addplayer") && (document.getElementById("addplayer").onclick = function () { addingPlayer = true; showStart(); });
     view.querySelectorAll("button[data-player]").forEach(function (b) {
@@ -717,7 +727,8 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
      STATISTICS: players, recording, stats screens, export / import
      ===================================================================== */
   var DB_KEY = "recall-stats-v1";
-  var DB = { app: "recall-ladder", version: 1, players: [], current: null, attempts: [] };
+  function freshDB(owner) { return { app: "recall-ladder", version: 1, players: [], current: null, attempts: [], owner: owner || null, pending: [], dirty: 0, removed: {}, lastPull: 0 }; }
+  var DB = freshDB();
   var saveOk = true;
   var addingPlayer = false;
   var LV_ORDER = ["easy", "medium", "hard"];
@@ -735,19 +746,32 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       var raw = localStorage.getItem(DB_KEY);
       if (raw) { var o = JSON.parse(raw); if (o && Array.isArray(o.players) && Array.isArray(o.attempts)) DB = o; }
     } catch (e) {}
-    if (!DB.players.length) {
-      var p = { id: uid(), name: "Player 1", created: Date.now(), events: true, single: false };
-      try { p.events = localStorage.getItem("recall-events") !== "off"; p.single = localStorage.getItem("recall-single") === "on"; } catch (e) {}
-      DB.players.push(p); DB.current = p.id; saveDB();
-    }
-    if (!curPlayer()) { DB.current = DB.players[0].id; saveDB(); }
+    if (DB.owner === undefined) DB.owner = null;
+    /* stages saved before accounts existed have never been uploaded */
+    if (!Array.isArray(DB.pending)) DB.pending = DB.owner ? [] : DB.attempts.map(function (a) { return a.id; });
+    if (!DB.removed || typeof DB.removed !== "object") DB.removed = {};
+    DB.lastPull = DB.lastPull || 0; DB.dirty = DB.dirty ? 1 : 0;
+    ensurePlayer();
+  }
+  function ensurePlayer() {
+    if (DB.players.length) { if (!curPlayer()) { DB.current = DB.players[0].id; saveDB(); } return; }
+    var p = { id: uid(), name: "Player 1", created: Date.now(), updated: Date.now(), events: true, single: false };
+    try { p.events = localStorage.getItem("recall-events") !== "off"; p.single = localStorage.getItem("recall-single") === "on"; } catch (e) {}
+    DB.players.push(p); DB.current = p.id; DB.dirty = 1; saveDB();
+  }
+  /* a player's name or options changed: upload the player list on the next sync */
+  function touch(p) { p.updated = Date.now(); DB.dirty = 1; }
+  function changed() { saveDB(); schedSync(1500); }
+  function dropPending() {
+    var have = {}; DB.attempts.forEach(function (a) { have[a.id] = 1; });
+    DB.pending = DB.pending.filter(function (id) { return have[id]; });
   }
 
   /* per-player settings */
   function getEvents() { var p = curPlayer(); return p ? p.events !== false : true; }
-  function setEvents(v) { var p = curPlayer(); if (p) { p.events = !!v; saveDB(); } }
+  function setEvents(v) { var p = curPlayer(); if (p) { p.events = !!v; touch(p); changed(); } }
   function getSingle() { var p = curPlayer(); return p ? !!p.single : false; }
-  function setSingle(v) { var p = curPlayer(); if (p) { p.single = !!v; saveDB(); } }
+  function setSingle(v) { var p = curPlayer(); if (p) { p.single = !!v; touch(p); changed(); } }
 
   /* bests come from the recorded attempts of the current player */
   function getBest(lv) {
@@ -771,7 +795,7 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
     };
     if (d.type === "numbers") a.digits = d.maxD;
     if (d.type === "tiles") a.grid = d.g;
-    DB.attempts.push(a); saveDB();
+    DB.attempts.push(a); DB.pending.push(a.id); changed();
   }
 
   /* ---------- tooltip ---------- */
@@ -1223,7 +1247,9 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
         '<textarea class="txt" id="imtext" rows="4" placeholder="Or paste exported text here" aria-label="Paste exported text"></textarea>' +
         '<label class="inl"><input type="checkbox" id="immerge" checked> Treat players with the same name as the same person</label>' +
         '<div class="row"><button class="btn small" id="imgo">Import</button></div><p class="note" id="immsg" role="status"></p>') +
-      '<p class="note">Statistics are stored in this browser on this device. Different browsers, or the same page opened from a different web address, keep separate copies, so use Export and Import to move them.</p>';
+      (AUTH && AUTH.verified && DB.owner === AUTH.uid
+        ? '<p class="note">You are signed in, so every player\'s statistics are also saved online and appear on any device where you sign in to this account.</p>'
+        : '<p class="note">Statistics are stored in this browser on this device. Different browsers, or the same page opened from a different web address, keep separate copies, so use Export and Import to move them' + (fbOn() ? ", or sign in to save them online" : "") + '.</p>');
   }
   function csvCell(v) {
     v = String(v == null ? "" : v);
@@ -1283,8 +1309,8 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       if (!ex && byName) DB.players.forEach(function (x) { if (!ex && x.name.toLowerCase() === name.toLowerCase()) ex = x; });
       if (ex) { map[key] = ex.id; return; }
       if (!id || DB.players.some(function (x) { return x.id === id; })) id = uid();
-      DB.players.push({ id: id, name: name, created: num(p.created, 1, 4e12) || Date.now(), events: p.events !== false, single: !!p.single });
-      map[key] = id; addedP++;
+      DB.players.push({ id: id, name: name, created: num(p.created, 1, 4e12) || Date.now(), updated: Date.now(), events: p.events !== false, single: !!p.single });
+      map[key] = id; addedP++; DB.dirty = 1;
     });
     var have = {}; DB.attempts.forEach(function (a) { have[a.id] = 1; });
     var added = 0, dup = 0, bad = 0;
@@ -1292,10 +1318,10 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       var a = cleanAttempt(r, map);
       if (!a) { bad++; return; }
       if (have[a.id]) { dup++; return; }
-      have[a.id] = 1; DB.attempts.push(a); added++;
+      have[a.id] = 1; DB.attempts.push(a); DB.pending.push(a.id); added++;
     });
     DB.attempts.sort(function (x, y) { return x.time - y.time; });
-    saveDB();
+    changed();
     return { added: added, dup: dup, bad: bad, players: addedP };
   }
   function arm(btn, label, fn) {
@@ -1312,22 +1338,26 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
       if (act === "rename") {
         var v = document.getElementById("pn-" + pid).value.trim().slice(0, 24);
         if (!v) return;
-        DB.players.forEach(function (p) { if (p.id === pid) p.name = v; }); saveDB(); showStats("data");
+        DB.players.forEach(function (p) { if (p.id === pid) { p.name = v; touch(p); } }); changed(); showStats("data");
       } else if (act === "clear") {
-        arm(b, "Tap again to clear", function () { DB.attempts = DB.attempts.filter(function (a) { return a.player !== pid; }); saveDB(); showStats("data"); });
+        arm(b, "Tap again to clear", function () {
+          DB.players.forEach(function (p) { if (p.id === pid) { p.clearedAt = Date.now(); touch(p); } });
+          DB.attempts = DB.attempts.filter(function (a) { return a.player !== pid; }); dropPending(); changed(); showStats("data");
+        });
       } else if (act === "del") {
         arm(b, "Tap again to delete", function () {
           DB.players = DB.players.filter(function (p) { return p.id !== pid; });
           DB.attempts = DB.attempts.filter(function (a) { return a.player !== pid; });
           if (DB.current === pid) DB.current = DB.players[0].id;
-          saveDB(); showStats("data");
+          DB.removed[pid] = Date.now(); DB.dirty = 1; dropPending();
+          changed(); showStats("data");
         });
       }
     };
     document.getElementById("addp").onclick = function () {
       var inp = document.getElementById("newname"), v = inp.value.trim().slice(0, 24); if (!v) { inp.focus(); return; }
-      var p = { id: uid(), name: v, created: Date.now(), events: true, single: false };
-      DB.players.push(p); saveDB(); showStats("data");
+      var p = { id: uid(), name: v, created: Date.now(), updated: Date.now(), events: true, single: false };
+      DB.players.push(p); DB.dirty = 1; changed(); showStats("data");
     };
     var scope = function () { return document.getElementById("exscope").value; };
     var ta = document.getElementById("extext"), msg = document.getElementById("exmsg");
@@ -1378,8 +1408,8 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
     var np = document.getElementById("newp");
     function commit() {
       var v = np.value.trim().slice(0, 24); if (!v) { np.focus(); return; }
-      var p = { id: uid(), name: v, created: Date.now(), events: true, single: false };
-      DB.players.push(p); DB.current = p.id; saveDB(); addingPlayer = false; showStart();
+      var p = { id: uid(), name: v, created: Date.now(), updated: Date.now(), events: true, single: false };
+      DB.players.push(p); DB.current = p.id; DB.dirty = 1; changed(); addingPlayer = false; showStart();
     }
     if (np) {
       np.focus();
@@ -1389,9 +1419,394 @@ button, .level, .opt, .tile { touch-action: manipulation; -webkit-user-select: n
     }
   }
 
-  loadDB();
+  /* =====================================================================
+     ACCOUNTS AND ONLINE SYNC
+     Firebase Auth (email and password) and Firestore, called over REST.
+     Firestore layout:
+       users/{uid}                 { players: [...], updated }   player names, options, clears, deletions
+       users/{uid}/attempts/{id}   one stage attempt, never changed after upload
+     Everything is saved on the device first. DB.pending lists attempts not yet
+     uploaded and DB.dirty marks player changes, so play works offline and
+     uploads whenever the network is back.
+     ===================================================================== */
+  var AUTH_KEY = "recall-auth-v1";
+  var AUTH = null;
+  var SY = { busy: null, again: false, err: "", t: null };
+  var ATT_FIELDS = ["id", "player", "time", "session", "mode", "type", "level", "stage", "items", "right", "cleared", "answerMs", "viewMs", "allowedSec", "score", "single", "digits", "grid"];
 
+  function fbOn() { return !!(FIREBASE.apiKey && FIREBASE.projectId); }
+  function loadAuth() {
+    try { var o = JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); if (o && o.uid && o.refreshToken) AUTH = o; } catch (e) {}
+  }
+  function saveAuth() {
+    try { if (AUTH) localStorage.setItem(AUTH_KEY, JSON.stringify(AUTH)); else localStorage.removeItem(AUTH_KEY); } catch (e) {}
+  }
+  function signedIn() { return !!(fbOn() && AUTH && !AUTH.expired && DB.owner === AUTH.uid); }
+
+  /* ---------- REST plumbing ---------- */
+  function authUrl(host, path) {
+    var base = FIREBASE.emulator ? FIREBASE.emulator + ":9099/" + host : "https://" + host;
+    return base + path + "?key=" + encodeURIComponent(FIREBASE.apiKey);
+  }
+  function fsBase() {
+    return (FIREBASE.emulator ? FIREBASE.emulator + ":8080" : "https://firestore.googleapis.com") + "/v1/" + docName("").replace(/\/$/, "");
+  }
+  function docName(path) { return "projects/" + FIREBASE.projectId + "/databases/(default)/documents/" + path; }
+  function readJSON(r) {
+    return r.json().catch(function () { return {}; }).then(function (j) {
+      if (r.ok) return j;
+      var err = (j && j.error) || {}, e = new Error(err.message || ("HTTP " + r.status));
+      e.status = r.status; e.code = err.message; throw e;
+    });
+  }
+  function post(url, body, form) {
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": form ? "application/x-www-form-urlencoded" : "application/json" },
+      body: form ? body : JSON.stringify(body)
+    }).then(readJSON);
+  }
+  function idt(path, body) { return post(authUrl("identitytoolkit.googleapis.com", "/v1/accounts:" + path), body); }
+  function setSession(j) {
+    AUTH = { uid: j.localId, email: j.email, idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (+j.expiresIn || 3600) * 1000, verified: false };
+    saveAuth();
+  }
+  function refreshToken() {
+    return post(authUrl("securetoken.googleapis.com", "/v1/token"), "grant_type=refresh_token&refresh_token=" + encodeURIComponent(AUTH.refreshToken), true)
+      .then(function (j) {
+        AUTH.idToken = j.id_token; AUTH.refreshToken = j.refresh_token;
+        AUTH.exp = Date.now() + (+j.expires_in || 3600) * 1000; saveAuth();
+        return AUTH.idToken;
+      }, function (e) {
+        /* 400 means the sign-in is no longer valid (password changed, account removed) */
+        if (e.status === 400) { AUTH.expired = true; saveAuth(); }
+        throw e;
+      });
+  }
+  function token() { return AUTH.exp - 120000 > Date.now() ? Promise.resolve(AUTH.idToken) : refreshToken(); }
+  /* the verified flag inside the token only changes after a refresh */
+  function checkVerified() {
+    return token().then(function (t) { return idt("lookup", { idToken: t }); }).then(function (j) {
+      var u = j.users && j.users[0];
+      if (!u || !u.emailVerified) return false;
+      return refreshToken().then(function () { AUTH.verified = true; saveAuth(); return true; });
+    });
+  }
+  function fs(method, path, body, retried) {
+    return token().then(function (t) {
+      return fetch(fsBase() + path, {
+        method: method,
+        headers: { "Authorization": "Bearer " + t, "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : undefined
+      });
+    }).then(function (r) {
+      if (r.status === 401 && !retried) return refreshToken().then(function () { return fs(method, path, body, true); });
+      if (r.status === 404 && method === "GET") return null;
+      return readJSON(r);
+    });
+  }
+  function enc(v) {
+    if (v === null || v === undefined) return { nullValue: null };
+    if (typeof v === "boolean") return { booleanValue: v };
+    if (typeof v === "number") return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+    if (typeof v === "string") return { stringValue: v };
+    if (Array.isArray(v)) return { arrayValue: { values: v.map(enc) } };
+    return { mapValue: { fields: encFields(v) } };
+  }
+  function encFields(o) { var f = {}; Object.keys(o).forEach(function (k) { if (o[k] !== undefined) f[k] = enc(o[k]); }); return f; }
+  function dec(v) {
+    if (!v) return null;
+    if ("integerValue" in v) return Number(v.integerValue);
+    if ("doubleValue" in v) return v.doubleValue;
+    if ("stringValue" in v) return v.stringValue;
+    if ("booleanValue" in v) return v.booleanValue;
+    if ("arrayValue" in v) return (v.arrayValue.values || []).map(dec);
+    if ("mapValue" in v) return decFields(v.mapValue.fields);
+    return null;
+  }
+  function decFields(f) { var o = {}; Object.keys(f || {}).forEach(function (k) { o[k] = dec(f[k]); }); return o; }
+
+  /* ---------- players: merge the online list with this device ---------- */
+  function pubPlayer(p) {
+    return { id: p.id, name: p.name, created: p.created || 0, updated: p.updated || 0, events: p.events !== false, single: !!p.single, clearedAt: p.clearedAt || 0 };
+  }
+  function applyClear(p) {
+    if (p.clearedAt) DB.attempts = DB.attempts.filter(function (a) { return a.player !== p.id || a.time > p.clearedAt; });
+  }
+  function mergePlayers(remote) {
+    var dirty = false, byId = {}, rid = {};
+    DB.players.forEach(function (p) { byId[p.id] = p; });
+    remote.forEach(function (r) {
+      if (!r || !safeId(r.id)) return;
+      rid[r.id] = r;
+      var loc = byId[r.id], gone = DB.removed[r.id];
+      if (r.deleted || gone) {
+        /* a deleted player stays deleted everywhere */
+        DB.players = DB.players.filter(function (p) { return p.id !== r.id; });
+        DB.attempts = DB.attempts.filter(function (a) { return a.player !== r.id; });
+        DB.removed[r.id] = Math.max(gone || 0, r.updated || 0, 1);
+        if (!r.deleted) dirty = true;
+        return;
+      }
+      if (!loc) {
+        loc = pubPlayer(r); loc.name = String(r.name || "Player").slice(0, 24);
+        DB.players.push(loc); applyClear(loc); return;
+      }
+      if ((r.updated || 0) > (loc.updated || 0)) {
+        var np = pubPlayer(r);
+        ["name", "updated", "events", "single", "clearedAt"].forEach(function (k) { loc[k] = np[k]; });
+        loc.name = String(loc.name || "Player").slice(0, 24);
+        applyClear(loc);
+      } else if ((loc.updated || 0) > (r.updated || 0)) dirty = true;
+    });
+    DB.players.slice().forEach(function (x) {
+      if (rid[x.id]) return;
+      var twin = null;
+      /* guest players join an account player with the same name */
+      if (DB.adopt) DB.players.forEach(function (y) { if (!twin && rid[y.id] && y.name.toLowerCase() === x.name.toLowerCase()) twin = y; });
+      if (!twin && DB.adopt && x.name === "Player 1" && !DB.attempts.some(function (a) { return a.player === x.id; })) {
+        /* the untouched default guest player is not worth adding to the account */
+        DB.players = DB.players.filter(function (p) { return p.id !== x.id; });
+        return;
+      }
+      if (!twin) { dirty = true; return; }
+      DB.attempts.forEach(function (a) { if (a.player === x.id) a.player = twin.id; });
+      DB.players = DB.players.filter(function (p) { return p.id !== x.id; });
+      if (DB.current === x.id) DB.current = twin.id;
+      applyClear(twin);
+    });
+    Object.keys(DB.removed).forEach(function (id) { if (!rid[id]) dirty = true; });
+    DB.adopt = false;
+    dropPending();
+    if (!curPlayer() && DB.players.length) DB.current = DB.players[0].id;
+    if (dirty) DB.dirty = 1;
+  }
+  function playersDoc() {
+    var list = DB.players.map(pubPlayer);
+    Object.keys(DB.removed).forEach(function (id) { list.push({ id: id, deleted: true, updated: DB.removed[id] }); });
+    return { fields: encFields({ players: list, updated: Date.now() }) };
+  }
+
+  /* ---------- attempts: upload the queue, download what other devices added ---------- */
+  function pushAttempts() {
+    var byId = {}; DB.attempts.forEach(function (a) { byId[a.id] = a; });
+    var ids = DB.pending.filter(function (id) { return byId[id]; }).slice(0, 300);
+    if (!ids.length) return Promise.resolve(false);
+    var now = Date.now();
+    var writes = ids.map(function (id) {
+      var a = byId[id], d = { up: now };
+      ATT_FIELDS.forEach(function (k) { if (a[k] !== undefined) d[k] = a[k]; });
+      return { update: { name: docName("users/" + AUTH.uid + "/attempts/" + id), fields: encFields(d) } };
+    });
+    return fs("POST", ":commit", { writes: writes }).then(function () {
+      var done = {}; ids.forEach(function (id) { done[id] = 1; });
+      DB.pending = DB.pending.filter(function (id) { return !done[id]; });
+      saveDB();
+      return DB.pending.length > 0;
+    });
+  }
+  function pullAttempts() {
+    /* "up" is when a stage reached the server, so stages played offline long ago still arrive */
+    var since = DB.lastPull ? DB.lastPull - 864e5 : 0, started = Date.now();
+    var q = { structuredQuery: { from: [{ collectionId: "attempts" }], where: { fieldFilter: { field: { fieldPath: "up" }, op: "GREATER_THAN_OR_EQUAL", value: { integerValue: String(since) } } } } };
+    return fs("POST", "/users/" + AUTH.uid + ":runQuery", q).then(function (rows) {
+      var map = {}, clr = {}, have = {}, added = 0;
+      DB.players.forEach(function (p) { map[p.id] = p.id; clr[p.id] = p.clearedAt || 0; });
+      DB.attempts.forEach(function (a) { have[a.id] = 1; });
+      (rows || []).forEach(function (r) {
+        if (!r || !r.document) return;
+        var a = cleanAttempt(decFields(r.document.fields), map);
+        if (!a || have[a.id] || a.time <= clr[a.player]) return;
+        have[a.id] = 1; DB.attempts.push(a); added++;
+      });
+      if (added) DB.attempts.sort(function (x, y) { return x.time - y.time; });
+      DB.lastPull = started; saveDB();
+      return added;
+    });
+  }
+
+  function sync() {
+    if (!signedIn()) return Promise.resolve();
+    if (SY.busy) { SY.again = true; return SY.busy; }
+    if (navigator.onLine === false) { SY.err = "offline"; acctStatus(); return Promise.resolve(); }
+    SY.err = "";
+    SY.busy = (AUTH.verified ? Promise.resolve(true) : checkVerified()).then(function (ok) {
+      if (!ok) { SY.err = "verify"; return; }
+      return fs("GET", "/users/" + AUTH.uid).then(function (doc) {
+        mergePlayers(doc && doc.fields ? (decFields(doc.fields).players || []) : []);
+        ensurePlayer();
+        if (doc && !DB.dirty) return saveDB();
+        DB.dirty = 0; saveDB();
+        return fs("PATCH", "/users/" + AUTH.uid, playersDoc()).catch(function (e) { DB.dirty = 1; saveDB(); throw e; });
+      }).then(function more() {
+        return pushAttempts().then(function (again) { if (again) return more(); });
+      }).then(pullAttempts);
+    }).catch(function (e) {
+      SY.err = AUTH && AUTH.expired ? "expired" : e && e.status ? "error" : "offline";
+    }).then(function () {
+      SY.busy = null; acctStatus();
+      if (SY.again) { SY.again = false; schedSync(500); }
+    });
+    acctStatus();
+    return SY.busy;
+  }
+  function schedSync(ms) {
+    if (!signedIn()) return;
+    clearTimeout(SY.t); SY.t = setTimeout(sync, ms);
+  }
+  function startSync() {
+    if (!fbOn()) return;
+    window.addEventListener("online", function () { schedSync(300); });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) schedSync(300); });
+    setInterval(function () { if (DB.pending.length || DB.dirty) sync(); }, 60000);
+    sync();
+  }
+
+  /* ---------- account status line and screens ---------- */
+  function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+  function acctText() {
+    if (!AUTH) return "Playing as a guest. Statistics stay on this device until you sign in.";
+    var who = "<b>" + esc(AUTH.email) + "</b>", n = DB.pending.length;
+    if (AUTH.expired) return who + ": please sign in again to keep saving online.";
+    if (DB.owner !== AUTH.uid) return who + ": finish signing in.";
+    if (!AUTH.verified) return who + ": confirm your email to start saving online.";
+    if (SY.busy) return who + " · saving…";
+    if (SY.err === "offline") return who + " · offline" + (n ? ", " + plural(n, "stage") + " will upload later" : "");
+    if (SY.err) return who + " · could not reach the server" + (n ? ", " + plural(n, "stage") + " waiting" : "");
+    return who + " · " + (n ? plural(n, "stage") + " waiting to upload" : "everything saved online");
+  }
+  function acctStatus() {
+    var el = document.getElementById("acctstat"); if (el) el.innerHTML = acctText();
+  }
+  function acctBarHTML() {
+    if (!fbOn()) return "";
+    return '<div class="acctbar"><span class="note" id="acctstat">' + acctText() + '</span><button class="btn small ghost" id="acctbtn">' + (AUTH ? "Account" : "Sign in") + "</button></div>";
+  }
+  function hasGuestData() {
+    return DB.attempts.length > 0 || DB.players.length > 1 || (DB.players[0] && DB.players[0].name !== "Player 1");
+  }
+  function signOut() {
+    AUTH = null; saveAuth();
+    DB = freshDB(); ensurePlayer(); DB.pending = []; saveDB();
+    SY.err = ""; showStart();
+  }
+  function finishSignIn() {
+    view.innerHTML = '<div class="head"><span class="eyebrow">Account</span><h2>Loading your statistics…</h2></div>';
+    sync().then(function () { ensurePlayer(); if (AUTH && !AUTH.verified) showAccount(); else showStart(); });
+  }
+  function netMsg(e) { return e && e.code ? apiErr(e.code) : "Could not reach the server. Check the connection and try again."; }
+  function apiErr(code) {
+    var m = {
+      EMAIL_EXISTS: "There is already an account with this email. Sign in instead.",
+      EMAIL_NOT_FOUND: "Email or password is wrong.",
+      INVALID_PASSWORD: "Email or password is wrong.",
+      INVALID_LOGIN_CREDENTIALS: "Email or password is wrong.",
+      INVALID_EMAIL: "That email address does not look right.",
+      MISSING_PASSWORD: "Type a password.",
+      WEAK_PASSWORD: "Use a password with at least 6 characters.",
+      USER_DISABLED: "This account has been turned off.",
+      TOO_MANY_ATTEMPTS_TRY_LATER: "Too many tries. Wait a few minutes and try again.",
+      OPERATION_NOT_ALLOWED: "Email sign-in is not turned on in Firebase yet.",
+      PASSWORD_LOGIN_DISABLED: "Email sign-in is not turned on in Firebase yet.",
+      CONFIGURATION_NOT_FOUND: "Sign-in is not set up in Firebase yet."
+    };
+    for (var k in m) if (String(code).indexOf(k) === 0) return m[k];
+    return "Something went wrong (" + esc(code) + ").";
+  }
+
+  function showAccount() {
+    clearTimer(); view.onclick = null; S = null; stats(); setWide(false); hideTip();
+    var head = '<div class="head"><span class="eyebrow">Account</span>', html, back = '<button class="btn ghost" id="aback">Back</button>';
+    if (!AUTH || AUTH.expired) {
+      html = head + "<h2>" + (AUTH ? "Sign in again" : "Save statistics online") + "</h2><p>With an account, every player's statistics are saved online and show up on any device where you sign in. One account can hold the whole family's players.</p></div>" +
+        '<form class="sec" id="aform" novalidate>' +
+        '<label class="fld">Email<input class="txt" id="aemail" type="email" autocomplete="username" maxlength="120" value="' + (AUTH ? esc(AUTH.email) : "") + '"></label>' +
+        '<label class="fld">Password<input class="txt" id="apass" type="password" autocomplete="current-password" maxlength="100"></label>' +
+        '<div class="row"><button class="btn" type="submit" id="ain">Sign in</button><button class="btn ghost" type="button" id="aup">Create account</button><button class="btn ghost small" type="button" id="aforgot">Forgot password</button></div>' +
+        '<p class="note" id="amsg" role="status">' + (AUTH ? "" : "New here? Type your email and a password of at least 6 characters, then tap Create account.") + "</p></form>" + back;
+    } else if (DB.owner !== AUTH.uid) {
+      var names = DB.players.map(function (p) { return esc(p.name); }).join(", ");
+      html = head + "<h2>Keep what was played here?</h2><p>This device has " + plural(DB.attempts.length, "stage") + " played without an account, by " + names + ". You can add them to <b>" + esc(AUTH.email) + "</b>. A player with the same name as one already in the account is joined to that player.</p></div>" +
+        '<div class="row"><button class="btn" id="ayes">Add them to my account</button><button class="btn ghost" id="ano">Discard them</button></div>';
+      back = "";
+    } else if (!AUTH.verified) {
+      html = head + "<h2>Confirm your email</h2><p>We sent a link to <b>" + esc(AUTH.email) + "</b>. Open it, then come back and tap the button below. If it is not in your inbox, look in spam. Until then everything is kept on this device and uploads once you confirm.</p></div>" +
+        '<div class="row"><button class="btn" id="aver">I have confirmed</button><button class="btn ghost" id="aresend">Send the link again</button><button class="btn ghost" id="aout">Sign out</button></div>' +
+        '<p class="note" id="amsg" role="status"></p>';
+    } else {
+      html = head + "<h2>" + esc(AUTH.email) + "</h2><p>Every player's statistics on this account are saved online and appear on any device where you sign in.</p></div>" +
+        '<p id="acctstat">' + acctText() + "</p>" +
+        '<div class="row"><button class="btn" id="async">Sync now</button><button class="btn ghost" id="aout">Sign out</button></div>' +
+        '<p class="note" id="amsg">Signing out removes this account\'s statistics from this device. They stay saved online, so sign in again to get them back.</p>';
+    }
+    view.innerHTML = html + back;
+    var msg = document.getElementById("amsg");
+    function say(t) { if (msg) msg.textContent = t; }
+    function busy(on) { view.querySelectorAll("button").forEach(function (b) { b.disabled = on; }); }
+    function on(id, fn) { var b = document.getElementById(id); if (b) b.onclick = fn; }
+    on("aback", showStart);
+
+    var form = document.getElementById("aform");
+    if (form) {
+      var em = document.getElementById("aemail"), pw = document.getElementById("apass");
+      (AUTH ? pw : em).focus();
+      var go = function (kind) {
+        var e = em.value.trim(), p = pw.value;
+        if (!e || !p) { say("Type your email and password."); return; }
+        busy(true); say(kind === "up" ? "Creating your account…" : "Signing in…");
+        idt(kind === "up" ? "signUp" : "signInWithPassword", { email: e, password: p, returnSecureToken: true }).then(function (j) {
+          var prev = DB.owner;
+          setSession(j);
+          if (kind === "up") {
+            /* a new account takes whatever was played on this device */
+            if (prev && prev !== j.localId) { DB = freshDB(j.localId); ensurePlayer(); }
+            DB.owner = j.localId; DB.dirty = 1; saveDB();
+            return idt("sendOobCode", { requestType: "VERIFY_EMAIL", idToken: j.idToken }).catch(function () {}).then(showAccount);
+          }
+          if (prev === j.localId) return finishSignIn();
+          if (prev || !hasGuestData()) { DB = freshDB(j.localId); saveDB(); return finishSignIn(); }
+          showAccount();
+        }).catch(function (err) { busy(false); say(netMsg(err)); });
+      };
+      form.onsubmit = function (ev) { ev.preventDefault(); go("in"); };
+      on("aup", function () { go("up"); });
+      on("aforgot", function () {
+        var e = em.value.trim(); if (!e) { say("Type your email first, then tap Forgot password."); em.focus(); return; }
+        busy(true);
+        idt("sendOobCode", { requestType: "PASSWORD_RESET", email: e }).then(function () {
+          busy(false); say("If there is an account for " + e + ", a link to choose a new password is on its way.");
+        }, function (err) { busy(false); say(err && err.code && err.code.indexOf("EMAIL_NOT_FOUND") === 0 ? "If there is an account for " + e + ", a link to choose a new password is on its way." : netMsg(err)); });
+      });
+    }
+    on("ayes", function () { DB.owner = AUTH.uid; DB.adopt = true; DB.dirty = 1; saveDB(); finishSignIn(); });
+    on("ano", function () { arm(this, "Tap again to discard", function () { DB = freshDB(AUTH.uid); saveDB(); finishSignIn(); }); });
+    on("aver", function () {
+      busy(true); say("Checking…");
+      checkVerified().then(function (ok) {
+        if (ok) return finishSignIn();
+        busy(false); say("Not confirmed yet. Open the link in the email first.");
+      }, function (err) { busy(false); say(netMsg(err)); });
+    });
+    on("aresend", function () {
+      busy(true);
+      token().then(function (t) { return idt("sendOobCode", { requestType: "VERIFY_EMAIL", idToken: t }); })
+        .then(function () { busy(false); say("Sent. Check your inbox."); }, function (err) { busy(false); say(netMsg(err)); });
+    });
+    on("async", function () { sync(); });
+    on("aout", function () {
+      var n = DB.pending.length, b = this;
+      if (n && AUTH.verified) say(plural(n, "stage") + " on this device have not uploaded yet and will be lost if you sign out now. Sync first if you can.");
+      arm(b, "Tap again to sign out", signOut);
+    });
+  }
+
+  loadDB();
+  loadAuth();
   showStart();
+  startSync();
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
 })();
 </script>
 </body>
